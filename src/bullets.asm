@@ -108,15 +108,8 @@ UpdateBullets_PerBullet:
 
     SetPointerVariableValue wUpdateBulletsCurrentBulletAddress, 2,c
     SetPointerVariableValue wUpdateBulletsCurrentBulletAddress, 3,d
-    
-    srl d
-    rr c
-    srl d
-    rr c
-    srl d
-    rr c
-    srl d
-    rr c
+
+    DeScale16BitInteger c,d
 
     ; See if our non scaled low byte is above 160
     ld a, c

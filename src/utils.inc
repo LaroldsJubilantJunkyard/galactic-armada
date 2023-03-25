@@ -14,6 +14,19 @@ DEF MAX_BULLET_COUNT EQU 2
 DEF PER_BULLET_BYTES_COUNT EQU 4
 DEF BULLET_MOVE_SPEED EQU 20
 
+MACRO DeScale16BitInteger
+
+srl \2
+    rr \1
+    srl \2
+    rr \1
+    srl \2
+    rr \1
+    srl \2
+    rr \1
+
+    ENDM
+
 ; eXAMPLE SetCurrentOAMValue 0, b
 MACRO SetCurrentOAMValue
 
@@ -42,7 +55,6 @@ MACRO SetCurrentOAMValue
 ; Example: IncreasePointerVariableAddress wPointerToData, 2
 MACRO IncreasePointerVariableAddress
 
-    push hl
 
     ld a, [\1+0]
     add a, \2
@@ -50,9 +62,7 @@ MACRO IncreasePointerVariableAddress
     ld a, [\1+1]
     adc a, 0
     ld  [\1+1], a
-
-    pop hl
-
+    
     ENDM
 
     ; Example: SetPointerVariableValue wPointerToData, 0, r8

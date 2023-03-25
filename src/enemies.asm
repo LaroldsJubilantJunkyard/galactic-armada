@@ -124,15 +124,8 @@ UpdateEnemies_PerEnemy:
 
     SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 2,c
     SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 3,d
-    
-    srl d
-    rr c
-    srl d
-    rr c
-    srl d
-    rr c
-    srl d
-    rr c
+
+    DeScale16BitInteger c,d
     
 
     SetCurrentOAMValue 0, c

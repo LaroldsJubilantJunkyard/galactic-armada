@@ -29,7 +29,6 @@ CheckCurrentEnemyAgainstBullets_NextLoop:
     ld [wEnemyBulletCollisionCounter], a
 
     ; Stop if we've checked all bullets
-    ld a, [wEnemyBulletCollisionCounter]
     cp a, MAX_BULLET_COUNT
     ret nc
 
@@ -53,28 +52,14 @@ CheckCurrentEnemyAgainstBullets_Loop_Y:
     GetPointerVariableValue wBulletAddresses, 2, b
     GetPointerVariableValue wBulletAddresses, 3, c
 
-    srl c
-    rr b
-    srl c
-    rr b
-    srl c
-    rr b
-    srl c
-    rr b
-
+    DeScale16BitInteger b,c
     
     ; get our enemy 16-bit y position
     GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 2, e
     GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 3, d
 
-    srl d
-    rr e
-    srl d
-    rr e
-    srl d
-    rr e
-    srl d
-    rr e
+
+    DeScale16BitInteger e,d
 
     ; at this point in time; e = enemy.y, b =bullet.y
 
