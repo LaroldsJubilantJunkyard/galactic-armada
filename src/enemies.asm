@@ -108,32 +108,31 @@ UpdateEnemies_Loop:
     ; Get our move speed
     GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 4, e
 
-    ;Increase16BitInteger c,d,e
-    Increase16BitInteger c,d,5
+    Increase16BitInteger c,d,e
 
+    
     SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 2,c
     SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 3,d
 
     DeScale16BitInteger c,d
+
+    ; See if our non scaled low byte is above 160
+    ld a, c
+    cp a, 160
+    jp nc, UpdateEnemies_DeActivateIfOutOfBounds
 
     SetCurrentOAMValue 0, c
     SetCurrentOAMValue 1, b
     SetCurrentOAMValue 2, 0
     SetCurrentOAMValue 3, 0
 
-
-
     call NextOAMSprite
-
-UpdateEnemies_DeActivateIfOutOfBounds:
-
-    ; See if our non scaled low byte is above 160
-    ld a, c
-    cp a, 160
     
     ; If it above 160, update the next enemy
     ; If it below 160, continue on  to deactivate
-    jp c, UpdateEnemies_NextEnemy
+    jp UpdateEnemies_NextEnemy
+
+UpdateEnemies_DeActivateIfOutOfBounds:
 
     ; if it's y value is grater than 160
     ; Set as inactive

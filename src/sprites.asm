@@ -31,6 +31,7 @@ ClearRemainingSprites::
     ret nc
     
     SetCurrentOAMValue 0,0
+    SetCurrentOAMValue 1,0
 
     call NextOAMSprite
 

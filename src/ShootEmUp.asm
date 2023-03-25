@@ -22,6 +22,8 @@ WaitVBlank:
 	ld a, 0
 	ld [rLCDC], a
 
+	; from: https://github.com/eievui5/gb-sprobj-lib
+	; The library is relatively simple to get set up. First, put the following in your initialization code:
 	; Initilize Sprite Object Library.
 	call InitSprObjLib
 	
@@ -55,7 +57,9 @@ Loop:
 	; save the keys last frame
 	ld a, [wCurKeys]
 	ld [wLastKeys], a
-	
+
+	; from: https://github.com/eievui5/gb-sprobj-lib
+	; hen put a call to ResetShadowOAM at the beginning of your main loop.
 	call ResetShadowOAM
 
 	; This is in input.asm
@@ -73,13 +77,22 @@ Loop:
 	
 WaitForVBlank:
 
-	; wait until it's NOT vblank
+	; wait until it's vblank
     ld a, [rLY]
     cp 144
-    jp nc, WaitForVBlank
+    jp c, WaitForVBlank
+	
+WaitForVBlank2:
 
+	; from: https://github.com/eievui5/gb-sprobj-lib
+	; Finally, run the following code during VBlank:
 	ld a, HIGH(wShadowOAM)
 	call hOAMDMA
+
+	; wait until it's vblank
+    ld a, [rLY]
+    cp 144
+    jp nc, WaitForVBlank2
 	
 	jp Loop
 

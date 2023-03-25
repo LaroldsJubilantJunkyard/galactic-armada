@@ -7,10 +7,10 @@ DEF MAX_BULLET_COUNT EQU 5
 DEF PER_ENEMY_BYTES_COUNT EQU 6 ; Bytes: active, x , y (low), y (high), speed, health
 DEF PER_BULLET_BYTES_COUNT EQU 4 ; Bytes: active, x , y (low), y (high)
 
-DEF ENEMY_MOVE_SPEED EQU 5
-DEF BULLET_MOVE_SPEED EQU 10
+DEF ENEMY_MOVE_SPEED EQU 7
+DEF BULLET_MOVE_SPEED EQU 15
 
-DEF PLAYER_MOVE_SPEED EQU 4
+DEF PLAYER_MOVE_SPEED EQU 15
 DEF PADDLE_Y_POSITION EQU 136
 
 MACRO DeScale16BitInteger
@@ -119,8 +119,7 @@ MACRO CopyAddressToPointerVariable
     ENDM
 
 
-
-
+; Example: Decrease16BitInteger lowByte, highByte, subtractAmount
 MACRO Decrease16BitInteger
 
     ld a, \1
@@ -132,6 +131,7 @@ MACRO Decrease16BitInteger
 
     ENDM
 
+; Example: Increase16BitInteger lowByte, highByte, addAmount
 MACRO Increase16BitInteger
 
     ld a, \1

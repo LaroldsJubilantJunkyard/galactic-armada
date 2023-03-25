@@ -106,16 +106,13 @@ UpdateBullets_PerBullet:
     cp a, 178
     ; If it below 160, continue on  to deactivate
     jp nc, UpdateBullets_DeActivateIfOutOfBounds
-
     
     SetCurrentOAMValue 0, c
     SetCurrentOAMValue 1, b
     SetCurrentOAMValue 2, 0
     SetCurrentOAMValue 3, 0
-    
 
     call NextOAMSprite
-
     
     jp UpdateBullets_Loop
 
