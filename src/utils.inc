@@ -2,21 +2,17 @@
 
 
 DEF MAX_ENEMY_COUNT EQU 2
-
-; Bytes: active, x , y (low), y (high), speed, health
-DEF PER_ENEMY_BYTES_COUNT EQU 6
-DEF ENEMY_MOVE_SPEED EQU 5
-
 DEF MAX_BULLET_COUNT EQU 2
 
+DEF PER_ENEMY_BYTES_COUNT EQU 6 ; Bytes: active, x , y (low), y (high), speed, health
+DEF PER_BULLET_BYTES_COUNT EQU 4 ; Bytes: active, x , y (low), y (high)
 
-; Bytes: active, x , y (low), y (high)
-DEF PER_BULLET_BYTES_COUNT EQU 4
+DEF ENEMY_MOVE_SPEED EQU 5
 DEF BULLET_MOVE_SPEED EQU 20
 
 MACRO DeScale16BitInteger
 
-srl \2
+    srl \2
     rr \1
     srl \2
     rr \1
@@ -62,7 +58,7 @@ MACRO IncreasePointerVariableAddress
     ld a, [\1+1]
     adc a, 0
     ld  [\1+1], a
-    
+
     ENDM
 
     ; Example: SetPointerVariableValue wPointerToData, 0, r8
@@ -123,23 +119,23 @@ MACRO CopyAddressToPointerVariable
 
 MACRO Decrease16BitInteger
 
-    ld a, [\1+0]
-    sub a, \2
-    ld [\1+0], a
-    ld a, [\1+1]
+    ld a, \1
+    sub a, \3
+    ld \1, a
+    ld a, \2
     sbc a, 0
-    ld [\1+1], a
+    ld \2, a
 
     ENDM
 
 MACRO Increase16BitInteger
 
-    ld a, [\1+0]
-    add a, \2
-    ld [\1+0], a
-    ld a, [\1+1]
+    ld a, \1
+    add a, \3
+    ld \1, a
+    ld a, \2
     adc a, 0
-    ld [\1+1], a
+    ld \2, a
 
     ENDM
 

@@ -8,9 +8,7 @@ wBulletAddresses: dw
 
 SECTION "EnemyBulletCollision", ROM0
 
-; from enemies.asm
-; Bytes: active, x , y (low), y (high), speed, health
-; wEnemies:: ds MAX_ENEMY_COUNT*PER_ENEMY_BYTES_COUNT
+; called from enemies.asm
 CheckCurrentEnemyAgainstBullets::
 
     ld a, 0
@@ -57,7 +55,6 @@ CheckCurrentEnemyAgainstBullets_Loop_Y:
     ; get our enemy 16-bit y position
     GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 2, e
     GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 3, d
-
 
     DeScale16BitInteger e,d
 
@@ -114,5 +111,15 @@ CheckCurrentEnemyAgainstBullets_Loop_X:
     ; set the second byte for the current bullet/enemy as zero for x=0 (move offscreeen)
     SetPointerVariableValue wBulletAddresses, 1,0
     SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 1, 0
+
+    ; Decrease how many active enemies their are
+    ld a, [wActiveEnemyCounter]
+    dec a
+    ld [wActiveEnemyCounter], a
+
+    ; Decrease how many active bullets their are
+    ld a, [wActiveBulletCounter]
+    dec a
+    ld [wActiveBulletCounter], a
 
     ret

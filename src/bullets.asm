@@ -7,7 +7,7 @@ wNextBullet::
     .x db
     .y dw
 
-wActiveBulletCounter: db
+wActiveBulletCounter:: db
 
 wUpdateBulletsCounter:db
 wUpdateBulletsCurrentBulletAddress:dw
@@ -33,12 +33,7 @@ InitializeBullets_Loop:
     ld [hl], a
 
     ; Increase the address
-    ld a, l
-    add a, PER_BULLET_BYTES_COUNT
-    ld l, a
-    ld a, h
-    adc a, 0
-    ld h, a
+    Increase16BitInteger l, h, PER_BULLET_BYTES_COUNT
 
     ld a, b
     inc a
@@ -99,12 +94,7 @@ UpdateBullets_PerBullet:
     GetPointerVariableValue wUpdateBulletsCurrentBulletAddress, 2, c
     GetPointerVariableValue wUpdateBulletsCurrentBulletAddress, 3, d
 
-    ld a, c
-    sub a, BULLET_MOVE_SPEED
-    ld c , a
-    ld a, d
-    sbc a, 0
-    ld d, a
+    Decrease16BitInteger c,d,BULLET_MOVE_SPEED
 
     SetPointerVariableValue wUpdateBulletsCurrentBulletAddress, 2,c
     SetPointerVariableValue wUpdateBulletsCurrentBulletAddress, 3,d
@@ -193,12 +183,7 @@ FireNextBullet_Loop:
 FireNextBullet_NextBullet:
 
     ; Increase the address
-    ld a, l
-    add a, PER_BULLET_BYTES_COUNT
-    ld l, a
-    ld a, h
-    adc a, 0
-    ld h, a
+    Increase16BitInteger l, h, PER_BULLET_BYTES_COUNT
 
     ld a,[wUpdateBulletsCounter]
     inc a

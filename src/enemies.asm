@@ -9,7 +9,7 @@ wNextEnemy:
     .y dw
     .speed db
     .health db
-wActiveEnemyCounter:db
+wActiveEnemyCounter::db
 wUpdateEnemiesCounter:db
 wUpdateEnemiesCurrentEnemyAddress::dw
 
@@ -37,12 +37,7 @@ InitializeEnemies_Loop:
     ld [hl], a
 
     ; Increase the address
-    ld a, l
-    add a, PER_ENEMY_BYTES_COUNT
-    ld l, a
-    ld a, h
-    adc a, 0
-    ld h, a
+    Increase16BitInteger l, h, PER_ENEMY_BYTES_COUNT
 
     ld a, b
     inc a
@@ -115,18 +110,13 @@ UpdateEnemies_PerEnemy:
     ; Get our move speed
     GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 4, e
 
-    ld a, c
-    add a, 5
-    ld c , a
-    ld a, d
-    adc a, 0
-    ld d, a
+    ;Increase16BitInteger c,d,e
+    Increase16BitInteger c,d,5
 
     SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 2,c
     SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 3,d
 
     DeScale16BitInteger c,d
-    
 
     SetCurrentOAMValue 0, c
     SetCurrentOAMValue 1, b
@@ -215,12 +205,7 @@ SpawnNextEnemy_Loop:
 SpawnNextEnemy_NextEnemy:
 
     ; Increase the address
-    ld a, l
-    add a, PER_ENEMY_BYTES_COUNT
-    ld l, a
-    ld a, h
-    adc a, 0
-    ld h, a
+    Increase16BitInteger l, h, PER_ENEMY_BYTES_COUNT
 
 
     ld a, b

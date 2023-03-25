@@ -106,24 +106,24 @@ TryShoot:
 
 MoveUp:
 
-    Decrease16BitInteger wPlayerPosition.y, PLAYER_MOVE_SPEED
+    Decrease16BitInteger [wPlayerPosition.y+0], [wPlayerPosition.y+1], PLAYER_MOVE_SPEED
 
     ret
 
 MoveDown:
 
-    Increase16BitInteger wPlayerPosition.y, PLAYER_MOVE_SPEED
+    Increase16BitInteger [wPlayerPosition.y+0], [wPlayerPosition.y+1], PLAYER_MOVE_SPEED
 
     ret
 
 MoveLeft:
 
-    Decrease16BitInteger wPlayerPosition.x, PLAYER_MOVE_SPEED
+    Decrease16BitInteger [wPlayerPosition.x+0], [wPlayerPosition.x+1], PLAYER_MOVE_SPEED
     ret
 
 MoveRight:
 
-    Increase16BitInteger wPlayerPosition.x, PLAYER_MOVE_SPEED
+    Increase16BitInteger [wPlayerPosition.x+0], [wPlayerPosition.x+1], PLAYER_MOVE_SPEED
 
     ret
 
