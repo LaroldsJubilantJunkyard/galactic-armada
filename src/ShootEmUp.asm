@@ -1,7 +1,4 @@
 INCLUDE "src/hardware.inc"
-include "src/happy-face.z80"
-include "src/happy-face.inc"
-include "src/tilemap.inc"
 
 
 SECTION "Header", ROM0[$100]
@@ -25,48 +22,8 @@ WaitVBlank:
 	ld a, 0
 	ld [rLCDC], a
 
-	; Copy the tile data
-	ld de, Tiles ; de contains the address where data will be copied from;
-	ld hl, $9000 ; hl contains the address where data will be copied to;
-	ld bc, TilesEnd - Tiles ; bc contains how many bytes we have to copy.
-	
-CopyTiles: 
-	ld a, [de]
-	ld [hli], a
-	inc de
-	dec bc
-	ld a, b
-	or a, c
-	jp nz, CopyTiles ; Jump to COpyTiles, if the z flag is not set. (the last operation had a non zero result)
-
-	; Copy the tilemap
-	ld de, Tilemap
-	ld hl, $9800
-	ld bc, TilemapEnd - Tilemap
-
-CopyTilemap:
-	ld a, [de]
-	ld [hli], a
-	inc de
-	dec bc
-	ld a, b
-	or a, c
-	jp nz, CopyTilemap
-
-	ld de, HappyFace
-	ld hl, $8000
-	ld bc, HappyFaceEnd - HappyFace
-CopyHappyFace:
-
-	ld a, [de]
-	ld [hli], a
-	inc de
-	dec bc
-	ld a, b
-	or a, c
-	jp nz, CopyHappyFace
-
 	call ClearAllSprites
+	call InitializeBackground
 	call InitializePlayer
 	call InitializeBullets
 	call InitializeEnemies

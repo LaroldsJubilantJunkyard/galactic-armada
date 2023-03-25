@@ -1,5 +1,7 @@
 include "src/utils.inc"
 include "src/hardware.inc"
+include "src/happy-face.z80"
+include "src/happy-face.inc"
 
 
 SECTION "PlayerVariables", WRAM0
@@ -22,6 +24,23 @@ InitializePlayer::
     ; Place in the middle of the screen
     Set16BitIntegerFromNonScaledValue wPlayerPosition.x,80
     Set16BitIntegerFromNonScaledValue wPlayerPosition.y,80
+
+    
+CopyHappyFace:
+
+	ld de, HappyFace
+	ld hl, $8000
+	ld bc, HappyFaceEnd - HappyFace
+
+CopyHappyFace_Loop:
+
+	ld a, [de]
+	ld [hli], a
+	inc de
+	dec bc
+	ld a, b
+	or a, c
+	jp nz, CopyHappyFace_Loop
 
     ret;
 
