@@ -1,7 +1,7 @@
-INCLUDE "src/main/hardware.inc"
-include "src/main/happy-face.z80"
-include "src/main/happy-face.inc"
-include "src/main/tilemap.inc"
+INCLUDE "src/hardware.inc"
+include "src/happy-face.z80"
+include "src/happy-face.inc"
+include "src/tilemap.inc"
 
 
 SECTION "Header", ROM0[$100]

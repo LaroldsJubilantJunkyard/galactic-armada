@@ -1,9 +1,22 @@
 
 
+
+DEF MAX_ENEMY_COUNT EQU 2
+
+; Bytes: active, x , y (low), y (high), speed, health
+DEF PER_ENEMY_BYTES_COUNT EQU 6
+DEF ENEMY_MOVE_SPEED EQU 5
+
+DEF MAX_BULLET_COUNT EQU 2
+
+
+; Bytes: active, x , y (low), y (high)
+DEF PER_BULLET_BYTES_COUNT EQU 4
+DEF BULLET_MOVE_SPEED EQU 20
+
 ; eXAMPLE SetCurrentOAMValue 0, b
 MACRO SetCurrentOAMValue
 
-    push hl
     push bc
 
     ld a, \2
@@ -22,9 +35,6 @@ MACRO SetCurrentOAMValue
     pop bc
 
     ld [hl], a
-
-    ;restore the original hl
-    pop hl
 
     ENDM
 

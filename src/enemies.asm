@@ -1,27 +1,20 @@
-include "src/main/utils.inc"
-include "src/main/hardware.inc"
-
-
-DEF MAX_ENEMY_COUNT EQU 5
-
-; Bytes: active, x , y (low), y (high), speed, health
-DEF PER_ENEMY_BYTES_COUNT EQU 6
-DEF ENEMY_MOVE_SPEED EQU 5
+include "src/utils.inc"
+include "src/hardware.inc"
 
 SECTION "EnemyVariables", WRAM0
 
 wSpawnCounter: db
 wNextEnemy:
     .x db
-    .y: dw
-    .speed: db
-    .health: db
+    .y dw
+    .speed db
+    .health db
 wActiveEnemyCounter:db
 wUpdateEnemiesCounter:db
-wUpdateEnemiesCurrentEnemyAddress:dw
+wUpdateEnemiesCurrentEnemyAddress::dw
 
 ; Bytes: active, x , y (low), y (high), speed, health
-wEnemies: ds MAX_ENEMY_COUNT*PER_ENEMY_BYTES_COUNT
+wEnemies:: ds MAX_ENEMY_COUNT*PER_ENEMY_BYTES_COUNT
 
 SECTION "Enemies", ROM0
 
@@ -81,19 +74,32 @@ UpdateEnemies_Loop:
     ld a, [wUpdateEnemiesCounter]
     inc a
     ld [wUpdateEnemiesCounter], a
-    
-    ; Compare against the max count
-    cp a, MAX_ENEMY_COUNT
+
+    ; Compare against the active count
+    ld a, [wActiveEnemyCounter]
+    ld b, a
+    ld a, [wUpdateEnemiesCounter]
+    cp a, b
     ret nc
 
     ; Increase the enemy data our address is pointingtwo
     IncreasePointerVariableAddress wUpdateEnemiesCurrentEnemyAddress, PER_ENEMY_BYTES_COUNT
 
 UpdateEnemies_PerEnemy:
+
     ; The first byte is if the current object is active
     ; If it's zero, it's inactive, go to the loop section
     GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 0, b
-    ld a,1
+    ld a,b
+    cp a, b
+    jp nz, UpdateEnemies_Loop
+
+    call CheckCurrentEnemyAgainstBullets
+
+    ; The first byte is if the current object is active
+    ; If it's zero, it's inactive, go to the loop section
+    GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 0, b
+    ld a,b
     cp a, b
     jp nz, UpdateEnemies_Loop
 
@@ -101,7 +107,6 @@ UpdateEnemies_PerEnemy:
     ; Get our x position
     GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 1, b
     
-    SetCurrentOAMValue 1, b
 
     ; get our 16-bit y position
     GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 2, c
@@ -111,7 +116,7 @@ UpdateEnemies_PerEnemy:
     GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 4, e
 
     ld a, c
-    add a, e
+    add a, 5
     ld c , a
     ld a, d
     adc a, 0
@@ -131,13 +136,13 @@ UpdateEnemies_PerEnemy:
     
 
     SetCurrentOAMValue 0, c
+    SetCurrentOAMValue 1, b
     SetCurrentOAMValue 2, 0
     SetCurrentOAMValue 3, 0
 
 
-    call NextOAMSprite
 
-    jp UpdateEnemies_Loop
+    call NextOAMSprite
 
 UpdateEnemies_DeActivateIfOutOfBounds:
 
@@ -148,16 +153,12 @@ UpdateEnemies_DeActivateIfOutOfBounds:
     ; If it above 160, update the next enemy
     ; If it below 160, continue on  to deactivate
     jp c, UpdateEnemies_Loop
-    
-    ; If it above 240, update the next enemy
-    ; If it below 240, continue on to deactivate
-    jp c, UpdateEnemies_Loop
 
     ; if it's y value is grater than 160
     ; Set as inactive
     SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 0,0
 
-    ; Increase counter
+    ; Decrease counter
     ld a,[wActiveEnemyCounter]
     dec a
     ld [wActiveEnemyCounter], a
@@ -169,13 +170,13 @@ SpawnNextEnemy:
     ; Make sure we don't have the max amount of enmies
     ld a, [wActiveEnemyCounter]
     cp a, MAX_ENEMY_COUNT
-    ret z
+    ret nc
 
     push bc
     push de
     push hl
 
-    ld b, 0
+    ld b, MAX_ENEMY_COUNT
 
     ld hl, wEnemies
 
@@ -220,12 +221,6 @@ SpawnNextEnemy_Loop:
 
 SpawnNextEnemy_NextEnemy:
 
-    ld a, b
-    inc a
-    ld b ,a
-    cp a, MAX_ENEMY_COUNT
-    jp z,SpawnNextEnemy_End
-
     ; Increase the address
     ld a, l
     add a, PER_ENEMY_BYTES_COUNT
@@ -234,6 +229,13 @@ SpawnNextEnemy_NextEnemy:
     adc a, 0
     ld h, a
 
+
+    ld a, b
+    cp a, MAX_ENEMY_COUNT
+    jp nc,SpawnNextEnemy_End
+
+    inc a
+    ld b ,a
 
     jp SpawnNextEnemy_Loop
 

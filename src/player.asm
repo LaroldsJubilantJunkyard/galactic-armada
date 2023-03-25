@@ -1,5 +1,5 @@
-include "src/main/utils.inc"
-include "src/main/hardware.inc"
+include "src/utils.inc"
+include "src/hardware.inc"
 
 
 SECTION "PlayerVariables", WRAM0

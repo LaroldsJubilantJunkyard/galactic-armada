@@ -1,4 +1,4 @@
-include "src/main/hardware.inc"
+include "src/hardware.inc"
 
  SECTION "Input", ROM0
 

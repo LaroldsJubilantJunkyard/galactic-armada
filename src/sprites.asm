@@ -1,5 +1,5 @@
-include "src/main/utils.inc"
-include "src/main/hardware.inc"
+include "src/utils.inc"
+include "src/hardware.inc"
 
 SECTION "SpriteVariables", WRAM0
 
@@ -26,9 +26,9 @@ ClearOamLoop::
 
 ClearRemainingSprites::
 
-    ld a, [wSpritesUsed]
-    cp a, OAM_COUNT
-    ret z
+    ld a, [wLastOAMAddress+0]
+    cp a, 160
+    ret nc
     
     SetCurrentOAMValue 0,0
 
