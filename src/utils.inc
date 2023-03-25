@@ -1,14 +1,17 @@
 
 
 
-DEF MAX_ENEMY_COUNT EQU 2
-DEF MAX_BULLET_COUNT EQU 2
+DEF MAX_ENEMY_COUNT EQU 5
+DEF MAX_BULLET_COUNT EQU 5
 
 DEF PER_ENEMY_BYTES_COUNT EQU 6 ; Bytes: active, x , y (low), y (high), speed, health
 DEF PER_BULLET_BYTES_COUNT EQU 4 ; Bytes: active, x , y (low), y (high)
 
 DEF ENEMY_MOVE_SPEED EQU 5
-DEF BULLET_MOVE_SPEED EQU 20
+DEF BULLET_MOVE_SPEED EQU 10
+
+DEF PLAYER_MOVE_SPEED EQU 4
+DEF PADDLE_Y_POSITION EQU 136
 
 MACRO DeScale16BitInteger
 
@@ -23,7 +26,7 @@ MACRO DeScale16BitInteger
 
     ENDM
 
-; eXAMPLE SetCurrentOAMValue 0, b
+; eXAMPLE SetCurrentOAMValue 0, r8 or n8
 MACRO SetCurrentOAMValue
 
     push bc
@@ -35,7 +38,8 @@ MACRO SetCurrentOAMValue
 	ld a,[wLastOAMAddress+0]
     add a, \1
     ld l, a
-	ld a, HIGH(_OAMRAM)
+	ld a, HIGH(wShadowOAM)
+    adc a, 0
     ld h, a
     
     ; Set the value

@@ -16,9 +16,6 @@ wPlayerPositionTest: db
 
 SECTION "Player", ROM0
 
-DEF PLAYER_MOVE_SPEED EQU 12
-DEF PADDLE_Y_POSITION EQU 136
-
 InitializePlayer::
 
     ; Place in the middle of the screen

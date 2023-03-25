@@ -60,9 +60,9 @@ UpdateEnemies::
 
     CopyAddressToPointerVariable wEnemies, wUpdateEnemiesCurrentEnemyAddress
 
-    jp UpdateEnemies_PerEnemy
+    jp UpdateEnemies_Loop
 
-UpdateEnemies_Loop:
+UpdateEnemies_NextEnemy:
 
     ; Check our coutner, if it's zero
     ; Stop the function
@@ -71,16 +71,14 @@ UpdateEnemies_Loop:
     ld [wUpdateEnemiesCounter], a
 
     ; Compare against the active count
-    ld a, [wActiveEnemyCounter]
-    ld b, a
     ld a, [wUpdateEnemiesCounter]
-    cp a, b
+    cp a, MAX_ENEMY_COUNT
     ret nc
 
     ; Increase the enemy data our address is pointingtwo
     IncreasePointerVariableAddress wUpdateEnemiesCurrentEnemyAddress, PER_ENEMY_BYTES_COUNT
 
-UpdateEnemies_PerEnemy:
+UpdateEnemies_Loop:
 
     ; The first byte is if the current object is active
     ; If it's zero, it's inactive, go to the loop section
@@ -135,7 +133,7 @@ UpdateEnemies_DeActivateIfOutOfBounds:
     
     ; If it above 160, update the next enemy
     ; If it below 160, continue on  to deactivate
-    jp c, UpdateEnemies_Loop
+    jp c, UpdateEnemies_NextEnemy
 
     ; if it's y value is grater than 160
     ; Set as inactive
@@ -146,7 +144,7 @@ UpdateEnemies_DeActivateIfOutOfBounds:
     dec a
     ld [wActiveEnemyCounter], a
 
-    jp UpdateEnemies_Loop
+    jp UpdateEnemies_NextEnemy
     
 SpawnNextEnemy:
 
@@ -159,9 +157,24 @@ SpawnNextEnemy:
     push de
     push hl
 
-    ld b, MAX_ENEMY_COUNT
+    ld b, 0
 
     ld hl, wEnemies
+
+    jp SpawnNextEnemy_Loop
+
+
+SpawnNextEnemy_NextEnemy:
+
+    ; Increase the address
+    Increase16BitInteger l, h, PER_ENEMY_BYTES_COUNT
+
+    ld a, b
+    cp a, MAX_ENEMY_COUNT
+    jp nc,SpawnNextEnemy_End
+
+    inc a
+    ld b ,a
 
 SpawnNextEnemy_Loop:
 
@@ -202,21 +215,6 @@ SpawnNextEnemy_Loop:
     jp SpawnNextEnemy_End
 
 
-SpawnNextEnemy_NextEnemy:
-
-    ; Increase the address
-    Increase16BitInteger l, h, PER_ENEMY_BYTES_COUNT
-
-
-    ld a, b
-    cp a, MAX_ENEMY_COUNT
-    jp nc,SpawnNextEnemy_End
-
-    inc a
-    ld b ,a
-
-    jp SpawnNextEnemy_Loop
-
 SpawnNextEnemy_End:
 
 
@@ -235,16 +233,16 @@ SpawnEnemies::
     inc a
     ld [wSpawnCounter], a
 
-    ; Make sure we don't have the max amount of enmies
-    ld a, [wActiveEnemyCounter]
-    cp a, MAX_ENEMY_COUNT
-    ret nc
-
     ; Check our spawn acounter
     ; Stop if it's below a given value
     ld a, [wSpawnCounter]
     cp a, 35
     ret c
+
+    ; Make sure we don't have the max amount of enmies
+    ld a, [wActiveEnemyCounter]
+    cp a, MAX_ENEMY_COUNT
+    ret nc
 
 GetSpawnPosition:
 
@@ -267,7 +265,6 @@ GetSpawnPosition:
     
     ld a, b
     ld [wNextEnemy.x], a
-
 
     Set16BitIntegerFromNonScaledValue wNextEnemy.y, 0
 

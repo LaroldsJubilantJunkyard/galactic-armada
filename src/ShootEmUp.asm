@@ -22,6 +22,18 @@ WaitVBlank:
 	ld a, 0
 	ld [rLCDC], a
 
+	; Initilize Sprite Object Library.
+	call InitSprObjLib
+	
+	; Reset hardware OAM
+	xor a, a
+	ld b, 160
+	ld hl, _OAMRAM
+.resetOAM
+	ld [hli], a
+	dec b
+	jr nz, .resetOAM
+
 	call ClearAllSprites
 	call InitializeBackground
 	call InitializePlayer
@@ -39,17 +51,12 @@ WaitVBlank:
 	ld [rOBP0], a
 	
 Loop:
-    ld a, [rLY]
-    cp 144
-    jp nc, Loop
-WaitVBlank2:
-    ld a, [rLY]
-    cp 144
-    jp c, WaitVBlank2
 
 	; save the keys last frame
 	ld a, [wCurKeys]
 	ld [wLastKeys], a
+	
+	call ResetShadowOAM
 
 	; This is in input.asm
 	; It's straight from: https://gbdev.io/gb-asm-tutorial/part2/input.html
@@ -63,7 +70,17 @@ WaitVBlank2:
 	call UpdateBullets
 	call ClearRemainingSprites
 	call SpawnEnemies
+	
+WaitForVBlank:
 
+	; wait until it's NOT vblank
+    ld a, [rLY]
+    cp 144
+    jp nc, WaitForVBlank
+
+	ld a, HIGH(wShadowOAM)
+	call hOAMDMA
+	
 	jp Loop
 
 

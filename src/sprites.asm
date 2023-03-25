@@ -14,7 +14,7 @@ ClearAllSprites::
 	; Start clearing oam
 	ld a, 0
     ld b, OAM_COUNT*sizeof_OAM_ATTRS ; 40 sprites times 4 bytes per sprite
-    ld hl, _OAMRAM ; The start of our oam sprites in RAM
+    ld hl, wShadowOAM ; The start of our oam sprites in RAM
 
 ClearOamLoop::
     ld [hli], a
@@ -42,9 +42,9 @@ ResetOAMSprite::
     ld a, 0
     ld [wSpritesUsed], a
 
-	ld a, LOW(_OAMRAM)
+	ld a, LOW(wShadowOAM)
 	ld [wLastOAMAddress+0], a
-	ld a, HIGH(_OAMRAM)
+	ld a, HIGH(wShadowOAM)
 	ld [wLastOAMAddress+1], a
 
     ret
@@ -59,7 +59,7 @@ NextOAMSprite::
 	ld a,[wLastOAMAddress+0]
     add a, sizeof_OAM_ATTRS
 	ld [wLastOAMAddress+0], a
-	ld a, HIGH(_OAMRAM)
+	ld a, HIGH(wShadowOAM)
 	ld [wLastOAMAddress+1], a
 
 
