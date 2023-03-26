@@ -86,26 +86,26 @@ UpdateEnemies_Loop:
 
     ; The first byte is if the current object is active
     ; If it's zero, it's inactive, go to the loop section
-    GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 0, b
+    GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, enemy_activeByte, b
     ld a,b
     cp 0
     jp z, UpdateEnemies_NextEnemy
 
     ; Get our x position
-    GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 1, b
+    GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, enemy_xByte, b
     
 
     ; get our 16-bit y position
-    GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 2, c
-    GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 3, d
+    GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, enemy_yLowByte, c
+    GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, enemy_yHighByte, d
 
     ; Get our move speed
-    GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 4, e
+    GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, enemy_speedByte, e
 
     Increase16BitInteger c,d,e
     
-    SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 2,c
-    SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 3,d
+    SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, enemy_yLowByte,c
+    SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, enemy_yHighByte,d
 
     DeScale16BitInteger c,d
 
@@ -132,7 +132,7 @@ UpdateEnemies_DeActivateIfOutOfBounds:
 
     ; if it's y value is grater than 160
     ; Set as inactive
-    SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 0,0
+    SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, enemy_activeByte,0
 
     ; Decrease counter
     ld a,[wActiveEnemyCounter]

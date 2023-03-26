@@ -1,4 +1,4 @@
-; eXAMPLE SetCurrentOAMValue 0, r8 or n8
+; eXAMPLE SetCurrentOAMValue 0, <r8-or-n8>
 MACRO SetCurrentOAMValue
 
     push bc

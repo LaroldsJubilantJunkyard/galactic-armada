@@ -6,7 +6,8 @@ DEF MAX_BULLET_COUNT EQU 5
 RSRESET
 DEF enemy_activeByte            RB   1
 DEF enemy_xByte                 RB   1
-DEF enemy_yWord                 RW   1
+DEF enemy_yLowByte              RB   1
+DEF enemy_yHighByte             RB   1
 DEF enemy_speedByte             RB   1
 DEF enemy_healthByte            RB   1
 DEF PER_ENEMY_BYTES_COUNT       RB   0
@@ -16,7 +17,8 @@ DEF PER_ENEMY_BYTES_COUNT       RB   0
 RSRESET
 DEF bullet_activeByte            RB   1
 DEF bullet_xByte                 RB   1
-DEF bullet_yWord                 RW   1
+DEF bullet_yLowByte              RB   1
+DEF bullet_yHighByte             RB   1
 DEF PER_BULLET_BYTES_COUNT       RB   0
 
 DEF ENEMY_MOVE_SPEED EQU 7

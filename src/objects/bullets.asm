@@ -84,24 +84,24 @@ UpdateBullets_PerBullet:
 
     ; The first byte is if the bullet is active
     ; If it's zero, it's inactive, go to the loop section
-    GetPointerVariableValue wUpdateBulletsCurrentBulletAddress, 0, b
+    GetPointerVariableValue wUpdateBulletsCurrentBulletAddress, bullet_activeByte, b
     ld a, b
     cp a, 0
     jp z, UpdateBullets_Loop
     
 
     ; Get our x position
-    GetPointerVariableValue wUpdateBulletsCurrentBulletAddress, 1, b
+    GetPointerVariableValue wUpdateBulletsCurrentBulletAddress, bullet_xByte, b
     
 
     ; get our 16-bit y position
-    GetPointerVariableValue wUpdateBulletsCurrentBulletAddress, 2, c
-    GetPointerVariableValue wUpdateBulletsCurrentBulletAddress, 3, d
+    GetPointerVariableValue wUpdateBulletsCurrentBulletAddress, bullet_yLowByte, c
+    GetPointerVariableValue wUpdateBulletsCurrentBulletAddress, bullet_yHighByte, d
 
     Decrease16BitInteger c,d,BULLET_MOVE_SPEED
 
-    SetPointerVariableValue wUpdateBulletsCurrentBulletAddress, 2,c
-    SetPointerVariableValue wUpdateBulletsCurrentBulletAddress, 3,d
+    SetPointerVariableValue wUpdateBulletsCurrentBulletAddress, bullet_yLowByte,c
+    SetPointerVariableValue wUpdateBulletsCurrentBulletAddress, bullet_yHighByte,d
 
     DeScale16BitInteger c,d
 
@@ -124,7 +124,7 @@ UpdateBullets_DeActivateIfOutOfBounds:
 
     ; if it's y value is grater than 160
     ; Set as inactive
-    SetPointerVariableValue wUpdateBulletsCurrentBulletAddress, 0,0
+    SetPointerVariableValue wUpdateBulletsCurrentBulletAddress, bullet_activeByte,0
 
     ; Decrease counter
     ld a,[wActiveBulletCounter]
