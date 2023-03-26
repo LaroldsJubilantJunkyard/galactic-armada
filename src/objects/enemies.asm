@@ -231,7 +231,7 @@ SpawnEnemies::
     ; Check our spawn acounter
     ; Stop if it's below a given value
     ld a, [wSpawnCounter]
-    cp a, 35
+    cp a, ENEMY_SPAWN_DELAY_MAX
     ret c
 
     ; Make sure we don't have the max amount of enmies
