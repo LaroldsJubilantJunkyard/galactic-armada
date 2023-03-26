@@ -1,5 +1,9 @@
-include "src/utils.inc"
-include "src/hardware.inc"
+
+include "src/utils/oam-macros.inc"
+include "src/utils/hardware.inc"
+include "src/utils/pointer-macros.inc"
+include "src/utils/int16-macros.inc"
+include "src/utils/constants.inc"
 
 SECTION "EnemyVariables", WRAM0
 
@@ -84,18 +88,8 @@ UpdateEnemies_Loop:
     ; If it's zero, it's inactive, go to the loop section
     GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 0, b
     ld a,b
-    cp a, b
-    jp nz, UpdateEnemies_Loop
-
-    call CheckCurrentEnemyAgainstBullets
-
-    ; The first byte is if the current object is active
-    ; If it's zero, it's inactive, go to the loop section
-    GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 0, b
-    ld a,b
-    cp a, b
-    jp nz, UpdateEnemies_Loop
-
+    cp 0
+    jp z, UpdateEnemies_NextEnemy
 
     ; Get our x position
     GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 1, b
@@ -109,7 +103,6 @@ UpdateEnemies_Loop:
     GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 4, e
 
     Increase16BitInteger c,d,e
-
     
     SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 2,c
     SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 3,d
@@ -127,6 +120,9 @@ UpdateEnemies_Loop:
     SetCurrentOAMValue 3, 0
 
     call NextOAMSprite
+    
+    ; check for collisions against bulelts
+    call CheckCurrentEnemyAgainstBullets
     
     ; If it above 160, update the next enemy
     ; If it below 160, continue on  to deactivate

@@ -1,5 +1,10 @@
 
-include "src/tilemap.inc"
+include "src/resources/backgrounds/tilemap.inc"
+
+include "src/utils/oam-macros.inc"
+include "src/utils/hardware.inc"
+include "src/utils/pointer-macros.inc"
+include "src/utils/int16-macros.inc"
 
  SECTION "Background", ROM0
 
@@ -38,6 +43,23 @@ CopyTilemap:
 	ld a, b
 	or a, c
 	jp nz, CopyTilemap
+
+	ret
+
+ScrollBackground::
+
+	Increase16BitInteger [mBackgroundScroll+0], [mBackgroundScroll+1], 5
+
+    Get16BitIntegerNonScaledValue mBackgroundScroll, b
+    ld a,b
+	ld [mBackgroundScrollReal], a
+
+	ret
+
+UpdateBackgroundPosition::
+
+	ld a, [mBackgroundScrollReal]
+	ld [rSCY], a
 
 	ret
 

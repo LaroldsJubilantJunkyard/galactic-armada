@@ -1,4 +1,4 @@
-INCLUDE "src/hardware.inc"
+INCLUDE "src/utils/hardware.inc"
 
 
 SECTION "Header", ROM0[$100]
@@ -74,6 +74,7 @@ Loop:
 	call UpdateBullets
 	call ClearRemainingSprites
 	call SpawnEnemies
+	call ScrollBackground
 	
 WaitForVBlank:
 
@@ -88,6 +89,7 @@ WaitForVBlank2:
 	; Finally, run the following code during VBlank:
 	ld a, HIGH(wShadowOAM)
 	call hOAMDMA
+	call UpdateBackgroundPosition
 
 	; wait until it's vblank
     ld a, [rLY]

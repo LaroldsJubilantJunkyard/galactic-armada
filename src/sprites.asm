@@ -1,5 +1,7 @@
-include "src/utils.inc"
-include "src/hardware.inc"
+include "src/utils/oam-macros.inc"
+include "src/utils/hardware.inc"
+include "src/utils/pointer-macros.inc"
+include "src/utils/int16-macros.inc"
 
 SECTION "SpriteVariables", WRAM0
 
@@ -55,7 +57,6 @@ NextOAMSprite::
     ld a, [wSpritesUsed]
     inc a
     ld [wSpritesUsed], a
-
 
 	ld a,[wLastOAMAddress+0]
     add a, sizeof_OAM_ATTRS

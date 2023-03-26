@@ -4,7 +4,7 @@
 ; So it's best to use some tested code
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-include "src/hardware.inc"
+include "src/utils/hardware.inc"
 
  SECTION "Input", ROM0
 

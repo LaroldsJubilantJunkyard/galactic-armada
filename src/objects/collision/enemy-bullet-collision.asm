@@ -1,5 +1,9 @@
-include "src/utils.inc"
-include "src/hardware.inc"
+include "src/utils/oam-macros.inc"
+include "src/utils/hardware.inc"
+include "src/utils/constants.inc"
+include "src/utils/pointer-macros.inc"
+include "src/utils/int16-macros.inc"
+include "src/utils/hardware.inc"
 
 SECTION "EnemyBulletCollisionVariables", WRAM0
 
