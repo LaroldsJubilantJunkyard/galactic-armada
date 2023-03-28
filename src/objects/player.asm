@@ -47,7 +47,7 @@ InitializePlayer::
 CopyHappyFace:
 
 	ld de, playerShipTileData
-	ld hl, $8000
+	ld hl, PLAYER_TILES_START
 	ld bc, playerShipTileDataEnd - playerShipTileData
 
 CopyHappyFace_Loop:

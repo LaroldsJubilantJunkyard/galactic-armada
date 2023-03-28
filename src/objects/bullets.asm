@@ -33,7 +33,7 @@ InitializeBullets::
 CopyHappyFace:
 
 	ld de, bulletTileData
-	ld hl, $8080
+	ld hl, BULLET_TILES_START
 	ld bc, bulletTileDataEnd - bulletTileData
 
 CopyHappyFace_Loop:

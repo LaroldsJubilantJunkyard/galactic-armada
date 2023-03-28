@@ -1,3 +1,5 @@
+include "src/utils/hardware.inc"
+
 DEF MAX_ENEMY_COUNT EQU 10
 DEF MAX_BULLET_COUNT EQU 5
 
@@ -31,6 +33,13 @@ DEF bullet_xByte                 RB   1
 DEF bullet_yLowByte              RB   1
 DEF bullet_yHighByte             RB   1
 DEF PER_BULLET_BYTES_COUNT       RB   0
+
+RSRESET
+DEF spriteTilesStart            RB _VRAM
+DEF PLAYER_TILES_START          RB 4*16
+DEF ENEMY_TILES_START           RB 4*16
+DEF BULLET_TILES_START          RB 0
+
 
 DEF ENEMY_MOVE_SPEED EQU 7
 DEF BULLET_MOVE_SPEED EQU 15

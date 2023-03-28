@@ -34,7 +34,7 @@ InitializeEnemies::
 CopyHappyFace:
 
 	ld de, enemyShipTileData
-	ld hl, $8040
+	ld hl, ENEMY_TILES_START
 	ld bc, enemyShipTileDataEnd - enemyShipTileData
 
 CopyHappyFace_Loop:
