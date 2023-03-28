@@ -1,7 +1,16 @@
 DEF MAX_ENEMY_COUNT EQU 10
 DEF MAX_BULLET_COUNT EQU 5
 
-DEF ENEMY_SPAWN_DELAY_MAX EQU 32
+DEF ENEMY_SPAWN_DELAY_MAX EQU 70
+
+; from https://rgbds.gbdev.io/docs/v0.6.1/rgbasm.5#EXPRESSIONS
+; The RS group of commands is a handy way of defining structure offsets:
+RSRESET
+DEF metasprite_y                RB   1
+DEF metasprite_x                RB   1
+DEF metasprite_tile             RB   1
+DEF metasprite_flag             RB   1
+DEF METASPRITE_BYTES_COUNT      RB   0
 
 ; from https://rgbds.gbdev.io/docs/v0.6.1/rgbasm.5#EXPRESSIONS
 ; The RS group of commands is a handy way of defining structure offsets:

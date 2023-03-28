@@ -1,8 +1,9 @@
 
-include "src/utils/oam-macros.inc"
+include "src/utils/macros/oam-macros.inc"
 include "src/utils/hardware.inc"
-include "src/utils/pointer-macros.inc"
-include "src/utils/int16-macros.inc"
+include "src/utils/macros/metasprite-macros.inc"
+include "src/utils/macros/pointer-macros.inc"
+include "src/utils/macros/int16-macros.inc"
 include "src/utils/constants.inc"
 
 SECTION "BulletVariables", WRAM0
@@ -22,7 +23,28 @@ wBullets:: ds MAX_BULLET_COUNT*PER_BULLET_BYTES_COUNT
 
 SECTION "Bullets", ROM0
 
+bulletMetasprite::
+    .metasprite1    db 0,0,8,0
+    .metaspriteEnd  db 128
+
 InitializeBullets::
+
+    
+CopyHappyFace:
+
+	ld de, bulletTileData
+	ld hl, $8080
+	ld bc, bulletTileDataEnd - bulletTileData
+
+CopyHappyFace_Loop:
+
+	ld a, [de]
+	ld [hli], a
+	inc de
+	dec bc
+	ld a, b
+	or a, c
+	jp nz, CopyHappyFace_Loop
 
     ld b, 0
 
@@ -111,10 +133,9 @@ UpdateBullets_PerBullet:
     ; If it below 160, continue on  to deactivate
     jp nc, UpdateBullets_DeActivateIfOutOfBounds
     
-    SetCurrentOAMValue 0, c
-    SetCurrentOAMValue 1, b
-    SetCurrentOAMValue 2, 0
-    SetCurrentOAMValue 3, 0
+    
+    DrawSpecificMetasprite bulletMetasprite, b, c
+    
 
     call NextOAMSprite
     

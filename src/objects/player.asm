@@ -2,10 +2,11 @@
 include "src/utils/hardware.inc"
 include "src/resources/sprites/happy-face.z80"
 include "src/resources/sprites/happy-face.inc"
-include "src/utils/oam-macros.inc"
+include "src/utils/macros/oam-macros.inc"
 include "src/utils/hardware.inc"
-include "src/utils/pointer-macros.inc"
-include "src/utils/int16-macros.inc"
+include "src/utils/macros/pointer-macros.inc"
+include "src/utils/macros/int16-macros.inc"
+include "src/utils/macros/metasprite-macros.inc"
 include "src/utils/constants.inc"
 
 SECTION "PlayerVariables", WRAM0
@@ -20,6 +21,22 @@ wPlayerPositionTest: db
 
 SECTION "Player", ROM0
 
+playerShipTileData: INCBIN "src/resources/sprites/player-ship.2bpp"
+playerShipTileDataEnd:
+
+
+enemyShipTileData:: INCBIN "src/resources/sprites/enemy-ship.2bpp"
+enemyShipTileDataEnd::
+
+bulletTileData:: INCBIN "src/resources/sprites/bullet.2bpp"
+bulletTileDataEnd::
+
+
+playerTestMetaSprite::
+    .metasprite1    db 0,0,0,0
+    .metasprite2    db 0,8,2,0
+    .metaspriteEnd  db 128
+
 InitializePlayer::
 
     ; Place in the middle of the screen
@@ -29,9 +46,9 @@ InitializePlayer::
     
 CopyHappyFace:
 
-	ld de, HappyFace
+	ld de, playerShipTileData
 	ld hl, $8000
-	ld bc, HappyFaceEnd - HappyFace
+	ld bc, playerShipTileDataEnd - playerShipTileData
 
 CopyHappyFace_Loop:
 
@@ -73,16 +90,10 @@ UpdatePlayer_HandleInput:
 UpdatePlayer_UpdateSprite:
 
     Get16BitIntegerNonScaledValue wPlayerPosition.x, b
-    SetCurrentOAMValue 1, b
+    Get16BitIntegerNonScaledValue wPlayerPosition.y, c
 
-    Get16BitIntegerNonScaledValue wPlayerPosition.y, b
-    SetCurrentOAMValue 0, b
 
-    ld b, 0
-    SetCurrentOAMValue 2,b
-    SetCurrentOAMValue 3, b
-
-    call NextOAMSprite
+    DrawSpecificMetasprite playerTestMetaSprite, b, c
 
     ret
 

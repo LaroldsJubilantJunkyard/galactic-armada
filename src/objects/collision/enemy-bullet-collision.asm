@@ -1,8 +1,8 @@
-include "src/utils/oam-macros.inc"
+include "src/utils/macros/oam-macros.inc"
 include "src/utils/hardware.inc"
 include "src/utils/constants.inc"
-include "src/utils/pointer-macros.inc"
-include "src/utils/int16-macros.inc"
+include "src/utils/macros/pointer-macros.inc"
+include "src/utils/macros/int16-macros.inc"
 include "src/utils/hardware.inc"
 
 SECTION "EnemyBulletCollisionVariables", WRAM0
@@ -67,7 +67,7 @@ CheckCurrentEnemyAgainstBullets_Loop_Y:
     ; subtract  bullet.y, (aka b) - (enemy.y+8, aka e)
     ; carry means e<b, means enemy.bottom is visually above bullet.y (no collision)
     ld a, e
-    add a, 8
+    add a, 16
     cp a, b
 
     ; no carry means 
@@ -76,7 +76,7 @@ CheckCurrentEnemyAgainstBullets_Loop_Y:
     ; subtract  enemy.y-8 (aka e) - bullet.y (aka b)
     ; no carry means e>b, means enemy.top is visually below bullet.y (no collision)
     ld a, e
-    sub a, 8
+    sub a, 16
     cp a, b
 
     ; no carry means no collision
@@ -95,7 +95,7 @@ CheckCurrentEnemyAgainstBullets_Loop_X:
     ; compare enemy.right - bullet.x
     ; carry means e<b, means enemy.right is smaller than bullet.x (no collision)
     ld a, e
-    add a, 8
+    add a, 16
     cp a, b
 
     jp c, CheckCurrentEnemyAgainstBullets_NextLoop
@@ -103,7 +103,7 @@ CheckCurrentEnemyAgainstBullets_Loop_X:
     ; compare enemy.right - bullet.x
     ; carry means e<b, means enemy.right is smaller than bullet.x (no collision)
     ld a, e
-    sub a, 8
+    sub a, 16
     cp a, b
 
     jp nc, CheckCurrentEnemyAgainstBullets_NextLoop

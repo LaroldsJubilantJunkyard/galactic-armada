@@ -43,7 +43,7 @@ WaitVBlank:
 	call InitializeEnemies
 
 	; Turn the LCD on
-	ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJON
+	ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJON | LCDCF_OBJ16
 	ld [rLCDC], a
 
 	; During the first (blank) frame, initialize display registers
@@ -53,6 +53,7 @@ WaitVBlank:
 	ld [rOBP0], a
 	
 Loop:
+
 
 	; save the keys last frame
 	ld a, [wCurKeys]

@@ -1,8 +1,9 @@
 
-include "src/utils/oam-macros.inc"
+include "src/utils/macros/oam-macros.inc"
 include "src/utils/hardware.inc"
-include "src/utils/pointer-macros.inc"
-include "src/utils/int16-macros.inc"
+include "src/utils/macros/pointer-macros.inc"
+include "src/utils/macros/int16-macros.inc"
+include "src/utils/macros/metasprite-macros.inc"
 include "src/utils/constants.inc"
 
 SECTION "EnemyVariables", WRAM0
@@ -22,7 +23,29 @@ wEnemies:: ds MAX_ENEMY_COUNT*PER_ENEMY_BYTES_COUNT
 
 SECTION "Enemies", ROM0
 
+enemyShipMetasprite::
+    .metasprite1    db 0,0,4,0
+    .metasprite2    db 0,8,6,0
+    .metaspriteEnd  db 128
+
 InitializeEnemies::
+
+
+CopyHappyFace:
+
+	ld de, enemyShipTileData
+	ld hl, $8040
+	ld bc, enemyShipTileDataEnd - enemyShipTileData
+
+CopyHappyFace_Loop:
+
+	ld a, [de]
+	ld [hli], a
+	inc de
+	dec bc
+	ld a, b
+	or a, c
+	jp nz, CopyHappyFace_Loop
 
     ld a, 0
     ld [wSpawnCounter], a
@@ -114,10 +137,8 @@ UpdateEnemies_Loop:
     cp a, 160
     jp nc, UpdateEnemies_DeActivateIfOutOfBounds
 
-    SetCurrentOAMValue 0, c
-    SetCurrentOAMValue 1, b
-    SetCurrentOAMValue 2, 0
-    SetCurrentOAMValue 3, 0
+    
+    DrawSpecificMetasprite enemyShipMetasprite, b, c
 
     call NextOAMSprite
     

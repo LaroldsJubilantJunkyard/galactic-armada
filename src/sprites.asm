@@ -1,7 +1,7 @@
-include "src/utils/oam-macros.inc"
+include "src/utils/macros/oam-macros.inc"
 include "src/utils/hardware.inc"
-include "src/utils/pointer-macros.inc"
-include "src/utils/int16-macros.inc"
+include "src/utils/macros/pointer-macros.inc"
+include "src/utils/macros/int16-macros.inc"
 
 SECTION "SpriteVariables", WRAM0
 
