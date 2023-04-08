@@ -1,5 +1,5 @@
-INCLUDE "src/utils/hardware.inc"
-INCLUDE "src/utils/macros/vblank-macros.inc"
+INCLUDE "src/main/utils/hardware.inc"
+INCLUDE "src/main/utils/macros/vblank-macros.inc"
 
 
 SECTION "Header", ROM0[$100]

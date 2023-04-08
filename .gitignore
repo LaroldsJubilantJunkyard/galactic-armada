@@ -3,6 +3,7 @@
 *.o
 *.gb
 /src/generated
+/obj
 *.2bpp
 *.attrmap
 *.pal

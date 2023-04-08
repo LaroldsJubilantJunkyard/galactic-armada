@@ -1,6 +1,6 @@
-INCLUDE "src/utils/hardware.inc"
-INCLUDE "src/utils/macros/vblank-macros.inc"
-INCLUDE "src/utils/macros/text-macros.inc"
+INCLUDE "src/main/utils/hardware.inc"
+INCLUDE "src/main/utils/macros/vblank-macros.inc"
+INCLUDE "src/main/utils/macros/text-macros.inc"
 
 SECTION "TitleScreenState", ROM0
 

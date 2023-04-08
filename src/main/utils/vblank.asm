@@ -1,4 +1,4 @@
-INCLUDE "src/utils/hardware.inc"
+INCLUDE "src/main/utils/hardware.inc"
 
 SECTION "VBlankVariables", WRAM0
 

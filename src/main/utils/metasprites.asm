@@ -1,7 +1,7 @@
-include "src/utils/macros/oam-macros.inc"
-include "src/utils/constants.inc"
-include "src/utils/macros/pointer-macros.inc"
-include "src/utils/macros/int16-macros.inc"
+include "src/main/utils/macros/oam-macros.inc"
+include "src/main/utils/constants.inc"
+include "src/main/utils/macros/pointer-macros.inc"
+include "src/main/utils/macros/int16-macros.inc"
 
 SECTION "MetaSpriteVariables", WRAM0
 
