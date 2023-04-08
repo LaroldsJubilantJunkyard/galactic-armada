@@ -12,7 +12,7 @@ EntryPoint:
 	ld a, 0
 	ld [rNR52], a
 
-	; Do not turn the LCD off outside of VBlank
+; Do not turn the LCD off outside of VBlank
 WaitVBlank:
 	ld a, [rLY] ; Copy the vertical line to a
 	cp 144 ; Check if the vertical line (in a) is 0
@@ -21,29 +21,36 @@ WaitVBlank:
 	; Turn the LCD off
 	ld a, 0
 	ld [rLCDC], a
+	
+	ld a, 0
+	ld [wGameState], a
+
+	ld a, 0
+	ld [wScore+0], a
+	ld [wScore+1], a
+	ld [wScore+2], a
+	ld [wScore+3], a
+	ld [wScore+4], a
+	ld [wScore+5], a
 
 	; from: https://github.com/eievui5/gb-sprobj-lib
 	; The library is relatively simple to get set up. First, put the following in your initialization code:
 	; Initilize Sprite Object Library.
-	call InitSprObjLib
-	
-	; Reset hardware OAM
-	xor a, a
-	ld b, 160
-	ld hl, _OAMRAM
-.resetOAM
-	ld [hli], a
-	dec b
-	jr nz, .resetOAM
+	call InitSprObjLibWrapper
 
 	call ClearAllSprites
 	call InitializeBackground
 	call InitializePlayer
 	call InitializeBullets
 	call InitializeEnemies
+	call InitScore
+	call InitInterrupts
+	call LoadTextFontIntoVRAM
+
+	call DrawStarField
 
 	; Turn the LCD on
-	ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJON | LCDCF_OBJ16
+	ld a, LCDCF_ON  | LCDCF_BGON|LCDCF_OBJON | LCDCF_OBJ16 | LCDCF_WINON | LCDCF_WIN9C00|LCDCF_BG9800
 	ld [rLCDC], a
 
 	; During the first (blank) frame, initialize display registers
@@ -51,6 +58,12 @@ WaitVBlank:
 	ld [rBGP], a
     ld a, %11100100
 	ld [rOBP0], a
+
+	ld a, 0
+	ld [rWY], a
+
+	ld a, 7
+	ld [rWX], a
 	
 Loop:
 
@@ -76,7 +89,9 @@ Loop:
 	call ClearRemainingSprites
 	call SpawnEnemies
 	call ScrollBackground
-	
+
+
+
 WaitForVBlank:
 
 	; wait until it's vblank
@@ -85,6 +100,7 @@ WaitForVBlank:
     jp c, WaitForVBlank
 	
 WaitForVBlank2:
+	call DrawNumber
 
 	; from: https://github.com/eievui5/gb-sprobj-lib
 	; Finally, run the following code during VBlank:
@@ -105,5 +121,5 @@ SECTION "GameVariables", WRAM0
 wLastKeys:: db
 wCurKeys:: db
 wNewKeys:: db
-
-
+wScore:: ds 6
+wGameState::db

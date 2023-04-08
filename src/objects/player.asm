@@ -16,14 +16,12 @@ wPlayerPosition:
 	.x dw
     .y dw
 
-
 wPlayerPositionTest: db
 
 SECTION "Player", ROM0
 
 playerShipTileData: INCBIN "src/resources/sprites/player-ship.2bpp"
 playerShipTileDataEnd:
-
 
 enemyShipTileData:: INCBIN "src/resources/sprites/enemy-ship.2bpp"
 enemyShipTileDataEnd::

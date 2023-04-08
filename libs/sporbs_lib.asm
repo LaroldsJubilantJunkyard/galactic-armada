@@ -59,6 +59,26 @@ ENDL
 OAMDMACodeEnd::
 
 SECTION "Initialize Sprite Object Library", ROM0
+
+; A wrapper or the InitSprObjLib code
+; from: https://github.com/eievui5/gb-sprobj-lib
+; The library is relatively simple to get set up. First, put the following in your initialization code:
+; Initilize Sprite Object Library.
+InitSprObjLibWrapper::
+
+  call InitSprObjLib
+	; Reset hardware OAM
+	xor a, a
+	ld b, 160
+	ld hl, _OAMRAM
+	
+.resetOAM
+	ld [hli], a
+	dec b
+	jr nz, .resetOAM
+  
+  ret
+
 ; Initializes the sprite object library, copying things such as the hOAMDMA
 ; function and reseting hOAMIndex
 ; @clobbers: a, bc, hl

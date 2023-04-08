@@ -115,6 +115,8 @@ CheckCurrentEnemyAgainstBullets_Loop_X:
     ; set the second byte for the current bullet/enemy as zero for x=0 (move offscreeen)
     SetPointerVariableValue wBulletAddresses, 1,0
     SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 1, 0
+    
+    call IncreaseScore;
 
     ; Decrease how many active enemies their are
     ld a, [wActiveEnemyCounter]

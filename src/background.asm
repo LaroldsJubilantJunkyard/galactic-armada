@@ -1,12 +1,27 @@
-
-include "src/resources/backgrounds/tilemap.inc"
-
 include "src/utils/macros/oam-macros.inc"
 include "src/utils/hardware.inc"
 include "src/utils/macros/pointer-macros.inc"
 include "src/utils/macros/int16-macros.inc"
 
- SECTION "Background", ROM0
+SECTION "Background", ROM0
+
+
+textFontTileData: INCBIN "src/resources/sprites/text-font.2bpp"
+textFontTileDataEnd:
+ 
+starFieldMap: INCBIN "src/resources/sprites/star-field.tilemap"
+starFieldMapEnd:
+ 
+starFieldTileData: INCBIN "src/resources/sprites/star-field.2bpp"
+starFieldTileDataEnd:
+ 
+titleScreenTileData: INCBIN "src/resources/sprites/title-screen.2bpp"
+titleScreenTileDataEnd:
+
+ 
+titleScreenTileMap: INCBIN "src/resources/sprites/title-screen.tilemap"
+titleScreenTileMapEnd:
+
 
 InitializeBackground::
 
@@ -15,36 +30,88 @@ InitializeBackground::
 	ld a, 0
 	ld [mBackgroundScroll+1],a
 
-CopyTiles:: 
+	ret
+
+LoadTextFontIntoVRAM::
 	; Copy the tile data
-	ld de, Tiles ; de contains the address where data will be copied from;
+	ld de, textFontTileData ; de contains the address where data will be copied from;
 	ld hl, $9000 ; hl contains the address where data will be copied to;
-	ld bc, TilesEnd - Tiles ; bc contains how many bytes we have to copy.
+	ld bc, textFontTileDataEnd - textFontTileData ; bc contains how many bytes we have to copy.
 	
-CopyTiles_Loop: 
+LoadTextFontIntoVRAM_Loop: 
 	ld a, [de]
 	ld [hli], a
 	inc de
 	dec bc
 	ld a, b
 	or a, c
-	jp nz, CopyTiles_Loop ; Jump to COpyTiles, if the z flag is not set. (the last operation had a non zero result)
+	jp nz, LoadTextFontIntoVRAM_Loop ; Jump to COpyTiles, if the z flag is not set. (the last operation had a non zero result)
+	ret
+
+DrawStarField::
+
+	; Copy the tile data
+	ld de, starFieldTileData ; de contains the address where data will be copied from;
+	ld bc, starFieldTileDataEnd - starFieldTileData ; bc contains how many bytes we have to copy.
+	
+DrawStarField_Loop: 
+	ld a, [de]
+	ld [hli], a
+	inc de
+	dec bc
+	ld a, b
+	or a, c
+	jp nz, DrawStarField_Loop ; Jump to COpyTiles, if the z flag is not set. (the last operation had a non zero result)
 
 	; Copy the tilemap
-	ld de, Tilemap
+	ld de, starFieldMap
 	ld hl, $9800
-	ld bc, TilemapEnd - Tilemap
+	ld bc, starFieldMapEnd - starFieldMap
 
-CopyTilemap:
+DrawStarField_Tilemap:
+	ld a, [de]
+	add a, 52
+	ld [hli], a
+	inc de
+	dec bc
+	ld a, b
+	or a, c
+	jp nz, DrawStarField_Tilemap
+
+	ret
+
+DrawTitleScreen::
+
+	; Copy the tile data
+	ld de, titleScreenTileData ; de contains the address where data will be copied from;
+	ld bc, titleScreenTileDataEnd - titleScreenTileData ; bc contains how many bytes we have to copy.
+	
+DrawTitleScreen_Loop: 
 	ld a, [de]
 	ld [hli], a
 	inc de
 	dec bc
 	ld a, b
 	or a, c
-	jp nz, CopyTilemap
+	jp nz, DrawTitleScreen_Loop ; Jump to COpyTiles, if the z flag is not set. (the last operation had a non zero result)
+
+	; Copy the tilemap
+	ld de, titleScreenTileMap
+	ld hl, $9800
+	ld bc, titleScreenTileMapEnd - titleScreenTileMap
+
+DrawTitleScreen_Tilemap:
+	ld a, [de]
+	add a, 52
+	ld [hli], a
+	inc de
+	dec bc
+	ld a, b
+	or a, c
+	jp nz, DrawTitleScreen_Tilemap
 
 	ret
+
 
 ScrollBackground::
 
