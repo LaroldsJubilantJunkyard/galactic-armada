@@ -13,9 +13,12 @@ rgbgfx -c "#FFFFFF,#cbcbcb,#414141,#000000;" --tilemap src/generated/backgrounds
 rgbgfx -c "#FFFFFF,#cbcbcb,#414141,#000000;" --tilemap src/generated/backgrounds/title-screen.tilemap --unique-tiles  -o src/generated/backgrounds/title-screen.2bpp src/resources/backgrounds/title-screen.png
 
 rgbasm -L -o bin/ShootEmUp.o src/ShootEmUp.asm
+rgbasm -L -o bin/title-screen-state.o src/states/title-screen/title-screen-state.asm
+rgbasm -L -o bin/gameplay-state.o src/states/gameplay/gameplay-state.asm
 rgbasm -L -o bin/text.o src/text.asm
 rgbasm -L -o bin/background.o src/background.asm
 rgbasm -L -o bin/interrupts.o src/interrupts.asm
+rgbasm -L -o bin/vblank.o src/utils/vblank.asm
 
 rgbasm -L -o bin/bullets.o src/objects/bullets.asm
 rgbasm -L -o bin/enemies.o src/objects/enemies.asm
@@ -28,5 +31,5 @@ rgbasm -L -o bin/math.o src/utils/math.asm
 rgbasm -L -o bin/sprites.o src/sprites.asm
 rgbasm -L -o bin/metasprites.o src/utils/metasprites.asm
 
-rgblink -o dist/ShootEmUp.gb bin/input.o bin/text.o bin/interrupts.o bin/background.o bin/sprites.o bin/math.o  bin/bullets.o bin/player.o bin/enemies.o  bin/metasprites.o  bin/ShootEmUp.o bin/enemy-bullet-collision.o bin/sporbs_lib.o
+rgblink -o dist/ShootEmUp.gb bin/input.o bin/vblank.o bin/title-screen-state.o bin/gameplay-state.o bin/text.o bin/interrupts.o bin/background.o bin/sprites.o bin/math.o  bin/bullets.o bin/player.o bin/enemies.o  bin/metasprites.o  bin/ShootEmUp.o bin/enemy-bullet-collision.o bin/sporbs_lib.o
 rgbfix -v -p 0xFF dist/ShootEmUp.gb

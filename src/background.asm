@@ -52,6 +52,7 @@ DrawStarField::
 
 	; Copy the tile data
 	ld de, starFieldTileData ; de contains the address where data will be copied from;
+	ld hl, $9340 ; hl contains the address where data will be copied to;
 	ld bc, starFieldTileDataEnd - starFieldTileData ; bc contains how many bytes we have to copy.
 	
 DrawStarField_Loop: 
@@ -84,6 +85,7 @@ DrawTitleScreen::
 
 	; Copy the tile data
 	ld de, titleScreenTileData ; de contains the address where data will be copied from;
+	ld hl, $9340 ; hl contains the address where data will be copied to;
 	ld bc, titleScreenTileDataEnd - titleScreenTileData ; bc contains how many bytes we have to copy.
 	
 DrawTitleScreen_Loop: 
