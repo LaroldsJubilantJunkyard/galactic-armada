@@ -6,6 +6,7 @@ INCLUDE "src/main/utils/macros/text-macros.inc"
 SECTION "GameplayState", ROM0
 
 
+wScoreText::  db "score", 255
 InitGameplayState::
 
 	ld a, 0
@@ -21,7 +22,7 @@ InitGameplayState::
 	call InitializePlayer
 	call InitializeBullets
 	call InitializeEnemies
-	call InitInterrupts
+	call InitStatInterrupts
 	call DrawStarField
     DrawText wScoreText,$9c00
 

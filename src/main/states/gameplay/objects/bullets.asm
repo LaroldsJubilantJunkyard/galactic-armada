@@ -72,7 +72,7 @@ InitializeBullets_Loop:
 
 UpdateBullets::
 
-    ; Make sure we don't have the max amount of enmies
+    ; Make sure we have SOME active enemies
     ld a, [wActiveBulletCounter]
     cp a, 0
     ret z

@@ -88,7 +88,6 @@ UpdatePlayer_UpdateSprite:
     Get16BitIntegerNonScaledValue wPlayerPosition.x, b
     Get16BitIntegerNonScaledValue wPlayerPosition.y, c
 
-
     DrawSpecificMetasprite playerTestMetaSprite, b, c
 
     ret

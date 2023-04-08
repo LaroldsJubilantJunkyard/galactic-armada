@@ -49,7 +49,7 @@ MACRO TypewriteText
     
     ld de, \2
     ld hl, \1
-    call SetBackgroundTile_Typewriter
+    call DrawText_WithTypewriterEffect
 
     pop hl
     pop de

@@ -143,19 +143,23 @@ DrawTitleScreen_Tilemap:
 
 	ret
 
-
+; This is called during gameplay state on every frame
 ScrollBackground::
 
+	; Increase our scaled integer by 5
 	Increase16BitInteger [mBackgroundScroll+0], [mBackgroundScroll+1], 5
 
+	; Get our true (non-scaled) value, and save it for later usage
     Get16BitIntegerNonScaledValue mBackgroundScroll, b
     ld a,b
 	ld [mBackgroundScrollReal], a
 
 	ret
 
+; This is called during vblanks
 UpdateBackgroundPosition::
 
+	; Tell our background to use our previously saved true value
 	ld a, [mBackgroundScrollReal]
 	ld [rSCY], a
 

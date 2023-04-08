@@ -27,8 +27,6 @@ InitStoryState::
 	
 UpdateStoryState::
 
-
-
     TypewriteText Story.Line1, $9821
     TypewriteText Story.Line2, $9861
     TypewriteText Story.Line3, $98A1
