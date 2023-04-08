@@ -6,20 +6,20 @@ include "src/utils/macros/int16-macros.inc"
 SECTION "Background", ROM0
 
 
-textFontTileData: INCBIN "src/resources/sprites/text-font.2bpp"
+textFontTileData: INCBIN "src/generated/backgrounds/text-font.2bpp"
 textFontTileDataEnd:
  
-starFieldMap: INCBIN "src/resources/sprites/star-field.tilemap"
+starFieldMap: INCBIN "src/generated/backgrounds/star-field.tilemap"
 starFieldMapEnd:
  
-starFieldTileData: INCBIN "src/resources/sprites/star-field.2bpp"
+starFieldTileData: INCBIN "src/generated/backgrounds/star-field.2bpp"
 starFieldTileDataEnd:
  
-titleScreenTileData: INCBIN "src/resources/sprites/title-screen.2bpp"
+titleScreenTileData: INCBIN "src/generated/backgrounds/title-screen.2bpp"
 titleScreenTileDataEnd:
 
  
-titleScreenTileMap: INCBIN "src/resources/sprites/title-screen.tilemap"
+titleScreenTileMap: INCBIN "src/generated/backgrounds/title-screen.tilemap"
 titleScreenTileMapEnd:
 
 

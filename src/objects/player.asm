@@ -1,7 +1,5 @@
 
 include "src/utils/hardware.inc"
-include "src/resources/sprites/happy-face.z80"
-include "src/resources/sprites/happy-face.inc"
 include "src/utils/macros/oam-macros.inc"
 include "src/utils/hardware.inc"
 include "src/utils/macros/pointer-macros.inc"
@@ -20,13 +18,13 @@ wPlayerPositionTest: db
 
 SECTION "Player", ROM0
 
-playerShipTileData: INCBIN "src/resources/sprites/player-ship.2bpp"
+playerShipTileData: INCBIN "src/generated/sprites/player-ship.2bpp"
 playerShipTileDataEnd:
 
-enemyShipTileData:: INCBIN "src/resources/sprites/enemy-ship.2bpp"
+enemyShipTileData:: INCBIN "src/generated/sprites/enemy-ship.2bpp"
 enemyShipTileDataEnd::
 
-bulletTileData:: INCBIN "src/resources/sprites/bullet.2bpp"
+bulletTileData:: INCBIN "src/generated/sprites/bullet.2bpp"
 bulletTileDataEnd::
 
 

@@ -1,13 +1,16 @@
 mkdir dist
 mkdir bin
+mkdir src\generated
+mkdir src\generated\sprites
+mkdir src\generated\backgrounds
 
 
-rgbgfx -c "#FFFFFF,#cfcfcf,#686868,#000000;" --columns -o src/resources/sprites/player-ship.2bpp src/resources/sprites/player-ship.png
-rgbgfx -c "#FFFFFF,#cfcfcf,#686868,#000000;" --columns -o src/resources/sprites/enemy-ship.2bpp src/resources/sprites/enemy-ship.png
-rgbgfx -c "#FFFFFF,#cfcfcf,#686868,#000000;" --columns -o src/resources/sprites/bullet.2bpp src/resources/sprites/bullet.png
-rgbgfx -c "#FFFFFF,#cbcbcb,#414141,#000000;" -o src/resources/sprites/text-font.2bpp src/resources/sprites/text-font.png
-rgbgfx -c "#FFFFFF,#cbcbcb,#414141,#000000;" -P --tilemap src/resources/sprites/star-field.tilemap --unique-tiles -o src/resources/sprites/star-field.2bpp src/resources/sprites/star-field.png
-rgbgfx -c "#FFFFFF,#cbcbcb,#414141,#000000;" -P --tilemap src/resources/sprites/title-screen.tilemap --unique-tiles  -o src/resources/sprites/title-screen.2bpp src/resources/sprites/title-screen.png
+rgbgfx -c "#FFFFFF,#cfcfcf,#686868,#000000;" --columns -o src/generated/sprites/player-ship.2bpp src/resources/sprites/player-ship.png
+rgbgfx -c "#FFFFFF,#cfcfcf,#686868,#000000;" --columns -o src/generated/sprites/enemy-ship.2bpp src/resources/sprites/enemy-ship.png
+rgbgfx -c "#FFFFFF,#cfcfcf,#686868,#000000;" --columns -o src/generated/sprites/bullet.2bpp src/resources/sprites/bullet.png
+rgbgfx -c "#FFFFFF,#cbcbcb,#414141,#000000;" -o src/generated/backgrounds/text-font.2bpp src/resources/backgrounds/text-font.png
+rgbgfx -c "#FFFFFF,#cbcbcb,#414141,#000000;" --tilemap src/generated/backgrounds/star-field.tilemap --unique-tiles -o src/generated/backgrounds/star-field.2bpp src/resources/backgrounds/star-field.png
+rgbgfx -c "#FFFFFF,#cbcbcb,#414141,#000000;" --tilemap src/generated/backgrounds/title-screen.tilemap --unique-tiles  -o src/generated/backgrounds/title-screen.2bpp src/resources/backgrounds/title-screen.png
 
 rgbasm -L -o bin/ShootEmUp.o src/ShootEmUp.asm
 rgbasm -L -o bin/text.o src/text.asm

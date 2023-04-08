@@ -2,3 +2,8 @@
 /bin
 *.o
 *.gb
+/src/generated
+*.2bpp
+*.attrmap
+*.pal
+*.tilemap
