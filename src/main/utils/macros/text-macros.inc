@@ -1,4 +1,6 @@
 CHARMAP " ", 0
+CHARMAP ".", 24
+CHARMAP "-", 25
 CHARMAP "a", 26
 CHARMAP "b", 27
 CHARMAP "c", 28

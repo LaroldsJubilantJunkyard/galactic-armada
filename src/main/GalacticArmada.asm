@@ -35,6 +35,8 @@ NextGameState::
 	; Turn the LCD on
 	ld a, LCDCF_ON  | LCDCF_BGON|LCDCF_OBJON | LCDCF_OBJ16 | LCDCF_WINON | LCDCF_WIN9C00|LCDCF_BG9800
 	ld [rLCDC], a
+	
+	call ClearBackground;
 
 	; During the first (blank) frame, initialize display registers
 	ld a, %11100100
@@ -57,16 +59,23 @@ NextGameState::
 
 	; Initiate the next state
 	ld a, [wGameState]
-	cp a, 1
+	cp a, 2
 	call z, InitGameplayState
+	ld a, [wGameState]
+	cp a, 1
+	call z, InitStoryState
 	ld a, [wGameState]
 	cp a, 0
 	call z, InitTitleScreenState
 
 	; Update the next state
 	ld a, [wGameState]
-	cp a, 1
+	cp a, 2
 	jp z, UpdateGameplayState
+	; Update the next state
+	ld a, [wGameState]
+	cp a, 1
+	jp z, UpdateStoryState
 	jp UpdateTitleScreenState
 
 
