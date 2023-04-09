@@ -1,3 +1,5 @@
+; Example: DeScale16BitInteger b, c
+; Where b is our low byte, and c is our high byte
 MACRO DeScale16BitInteger
 
     srl \2

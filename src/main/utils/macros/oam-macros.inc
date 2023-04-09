@@ -1,4 +1,5 @@
-; eXAMPLE SetCurrentOAMValue 0, <r8-or-n8>
+; Example SetCurrentOAMValue 0, b
+; Set's 'b' in the first value (0) of the current oam sprite
 MACRO SetCurrentOAMValue
 
     push bc
