@@ -10,6 +10,9 @@ SECTION "InputUtils", ROM0
 
 WaitForKeyFunction::
 
+    ; Save our original value
+    push bc
+
 	; save the keys last frame
 	ld a, [wCurKeys]
 	ld [wLastKeys], a
@@ -31,6 +34,8 @@ WaitForKeyFunction::
     and a, b
     jp nz,WaitForKeyFunction_NotPressed
 
+	; restore our original value
+	pop bc
 
     ret
 

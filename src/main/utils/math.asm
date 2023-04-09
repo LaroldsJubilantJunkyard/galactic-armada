@@ -5,7 +5,7 @@ randstate:: ds 4
 SECTION "Math", ROM0
 
 
-;; rom: https://github.com/pinobatch/libbet/blob/master/src/rand.z80#L34-L54
+;; From: https://github.com/pinobatch/libbet/blob/master/src/rand.z80#L34-L54
 ; Generates a pseudorandom 16-bit integer in BC
 ; using the LCG formula from cc65 rand():
 ; x[i + 1] = x[i] * 0x01010101 + 0xB3B3B3B3
