@@ -4,6 +4,7 @@ include "src/main/utils/constants.inc"
 include "src/main/utils/macros/pointer-macros.inc"
 include "src/main/utils/macros/int16-macros.inc"
 include "src/main/utils/hardware.inc"
+include "src/main/utils/macros/collision-macros.inc"
 
 SECTION "EnemyBulletCollisionVariables", WRAM0
 
@@ -62,26 +63,8 @@ CheckCurrentEnemyAgainstBullets_Loop_Y:
 
     DeScale16BitInteger e,d
 
-    ; at this point in time; e = enemy.y, b =bullet.y
-
-    ; subtract  bullet.y, (aka b) - (enemy.y+8, aka e)
-    ; carry means e<b, means enemy.bottom is visually above bullet.y (no collision)
-    ld a, e
-    add a, 16
-    cp a, b
-
-    ; no carry means 
-    jp c, CheckCurrentEnemyAgainstBullets_NextLoop
-
-    ; subtract  enemy.y-8 (aka e) - bullet.y (aka b)
-    ; no carry means e>b, means enemy.top is visually below bullet.y (no collision)
-    ld a, e
-    sub a, 16
-    cp a, b
-
-    ; no carry means no collision
-    jp nc, CheckCurrentEnemyAgainstBullets_NextLoop
-
+    ; Check the y distances. Jump to 'CheckCurrentEnemyAgainstBullets_NextLoop' on failure
+    CheckDistanceAndJump b,e, 16, CheckCurrentEnemyAgainstBullets_NextLoop
 
 
 CheckCurrentEnemyAgainstBullets_Loop_X:
@@ -92,21 +75,19 @@ CheckCurrentEnemyAgainstBullets_Loop_X:
     GetPointerVariableValue wBulletAddresses, 1, b
     GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 1, e
 
-    ; compare enemy.right - bullet.x
-    ; carry means e<b, means enemy.right is smaller than bullet.x (no collision)
+    ; Add a 4 pixel offset to the bullet posiition
+    ld a, b
+    add a, 4
+    ld b ,a
+
+    ; Add 8 pixel offset to the enemy position
     ld a, e
-    add a, 16
-    cp a, b
+    add a, 8
+    ld e ,a
 
-    jp c, CheckCurrentEnemyAgainstBullets_NextLoop
+    ; Check the x distances. Jump to 'CheckCurrentEnemyAgainstBullets_NextLoop' on failure
+    CheckDistanceAndJump b, e, 12,CheckCurrentEnemyAgainstBullets_NextLoop
 
-    ; compare enemy.right - bullet.x
-    ; carry means e<b, means enemy.right is smaller than bullet.x (no collision)
-    ld a, e
-    sub a, 16
-    cp a, b
-
-    jp nc, CheckCurrentEnemyAgainstBullets_NextLoop
     
     ; set the first byte for the current bullet/enemy as zero for inactive
     SetPointerVariableValue wBulletAddresses, 0,0
@@ -117,6 +98,7 @@ CheckCurrentEnemyAgainstBullets_Loop_X:
     SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 1, 0
     
     call IncreaseScore;
+    call DrawScore
 
     ; Decrease how many active enemies their are
     ld a, [wActiveEnemyCounter]

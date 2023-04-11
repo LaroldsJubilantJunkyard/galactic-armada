@@ -24,6 +24,13 @@ ClearOamLoop::
     jp nz, ClearOamLoop
     ld a,0
     ld [wSpritesUsed],a
+    
+    
+	; from: https://github.com/eievui5/gb-sprobj-lib
+	; Finally, run the following code during VBlank:
+	ld a, HIGH(wShadowOAM)
+	call hOAMDMA
+
     ret
 
 ClearRemainingSprites::

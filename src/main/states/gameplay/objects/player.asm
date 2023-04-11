@@ -10,11 +10,10 @@ include "src/main/utils/constants.inc"
 SECTION "PlayerVariables", WRAM0
 
 ; first byte is low, second is high (little endian)
-wPlayerPosition: 
-	.x dw
-    .y dw
+wPlayerPositionX:: dw
+wPlayerPositionY:: dw
 
-wPlayerPositionTest: db
+mPlayerFlash: dw
 
 SECTION "Player", ROM0
 
@@ -35,9 +34,13 @@ playerTestMetaSprite::
 
 InitializePlayer::
 
+    ld a, 0
+    ld [mPlayerFlash+0],a
+    ld [mPlayerFlash+1],a
+
     ; Place in the middle of the screen
-    Set16BitIntegerFromNonScaledValue wPlayerPosition.x,80
-    Set16BitIntegerFromNonScaledValue wPlayerPosition.y,80
+    Set16BitIntegerFromNonScaledValue wPlayerPositionX,80
+    Set16BitIntegerFromNonScaledValue wPlayerPositionY,80
 
     
 CopyHappyFace:
@@ -82,11 +85,53 @@ UpdatePlayer_HandleInput:
 	and a, PADF_A
 	call nz, TryShoot
 
+    ld a, [mPlayerFlash+0]
+    ld b, a
+
+    ld a, [mPlayerFlash+1]
+    ld c, a
+    
+    
+
+UpdatePlayer_UpdateSprite_CheckFlashing:
+
+    ld a, b
+    or a, c
+    jp z, UpdatePlayer_UpdateSprite
+
+    Decrease16BitInteger b,c,5
+    
+
+UpdatePlayer_UpdateSprite_DecreaseFlashing:
+
+    ld a, b
+    ld [mPlayerFlash+0], a
+    ld a, c
+    ld [mPlayerFlash+1], a
+
+    DeScale16BitInteger b, c
+
+    ld a, b
+    cp a, 5
+    jp c, UpdatePlayer_UpdateSprite_StopFlashing
+
+
+    bit 0, b
+    jp z, UpdatePlayer_UpdateSprite
+
+UpdatePlayer_UpdateSprite_Flashing:
+
+    ret;
+UpdatePlayer_UpdateSprite_StopFlashing:
+
+    ld a, 0
+    ld [mPlayerFlash+0],a
+    ld [mPlayerFlash+1],a
 
 UpdatePlayer_UpdateSprite:
 
-    Get16BitIntegerNonScaledValue wPlayerPosition.x, b
-    Get16BitIntegerNonScaledValue wPlayerPosition.y, c
+    Get16BitIntegerNonScaledValue wPlayerPositionX, b
+    Get16BitIntegerNonScaledValue wPlayerPositionY, c
 
     DrawSpecificMetasprite playerTestMetaSprite, b, c
 
@@ -97,40 +142,55 @@ TryShoot:
 	and a, PADF_A
     ret nz
 
-    Get16BitIntegerNonScaledValue wPlayerPosition.x, b
+    Get16BitIntegerNonScaledValue wPlayerPositionX, b
     ld a,b
     ld [wNextBullet], a
 
-    ld a, [wPlayerPosition.y+0]
+    ld a, [wPlayerPositionY+0]
     ld [wNextBullet+1], a
 
-    ld a, [wPlayerPosition.y+1]
+    ld a, [wPlayerPositionY+1]
     ld [wNextBullet+2], a
 
     call FireNextBullet;
 
     ret
 
+DamagePlayer::
+
+    
+
+    ld a, 0
+    ld [mPlayerFlash+0], a
+    ld a, 1
+    ld [mPlayerFlash+1], a
+
+    ld a, [wLives]
+    dec a
+    ld [wLives], a
+
+    ret
+
 MoveUp:
 
-    Decrease16BitInteger [wPlayerPosition.y+0], [wPlayerPosition.y+1], PLAYER_MOVE_SPEED
+    Decrease16BitInteger [wPlayerPositionY+0], [wPlayerPositionY+1], PLAYER_MOVE_SPEED
 
     ret
 
 MoveDown:
 
-    Increase16BitInteger [wPlayerPosition.y+0], [wPlayerPosition.y+1], PLAYER_MOVE_SPEED
+    Increase16BitInteger [wPlayerPositionY+0], [wPlayerPositionY+1], PLAYER_MOVE_SPEED
 
     ret
 
 MoveLeft:
 
-    Decrease16BitInteger [wPlayerPosition.x+0], [wPlayerPosition.x+1], PLAYER_MOVE_SPEED
+    Decrease16BitInteger [wPlayerPositionX+0], [wPlayerPositionX+1], PLAYER_MOVE_SPEED
     ret
 
 MoveRight:
 
-    Increase16BitInteger [wPlayerPosition.x+0], [wPlayerPosition.x+1], PLAYER_MOVE_SPEED
+    Increase16BitInteger [wPlayerPositionX+0], [wPlayerPositionX+1], PLAYER_MOVE_SPEED
 
     ret
 

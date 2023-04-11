@@ -43,6 +43,18 @@ IncreaseScore_Next:
 
     jp IncreaseScore_Loop
 
+    
+DrawLives::
+
+    ld hl, wLives
+    ld de, $9C13 ; The window tilemap starts at $9C00
+
+    ld a, [hl]
+    add a, 10 ; our numeric tiles start at tile 10, so add to 10 to each bytes value
+    ld [de], a
+
+    ret
+
 
 DrawScore::
 

@@ -13,6 +13,9 @@ WaitForKeyFunction::
     ; Save our original value
     push bc
 
+	
+WaitForKeyFunction_Loop:
+
 	; save the keys last frame
 	ld a, [wCurKeys]
 	ld [wLastKeys], a
@@ -44,4 +47,4 @@ WaitForKeyFunction_NotPressed:
 
     WaitForVBlank
 
-    jp WaitForKeyFunction
+    jp WaitForKeyFunction_Loop

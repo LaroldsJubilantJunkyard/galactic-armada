@@ -30,6 +30,12 @@ NextGameState::
 	ld a, 0
 	ld [rLCDC], a
 
+	ld a, 0
+	ld [rSCX],a
+	ld [rSCY],a
+	ld [rWX],a
+	ld [rWY],a
+
 	call LoadTextFontIntoVRAM
 
 	; Turn the LCD on

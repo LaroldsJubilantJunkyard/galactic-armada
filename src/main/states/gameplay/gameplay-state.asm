@@ -7,7 +7,11 @@ SECTION "GameplayState", ROM0
 
 
 wScoreText::  db "score", 255
+wLivesText::  db "lives", 255
 InitGameplayState::
+
+	ld a, 3
+	ld [wLives+0], a
 
 	ld a, 0
 	ld [wScore+0], a
@@ -25,6 +29,10 @@ InitGameplayState::
 	call InitStatInterrupts
 	call DrawStarField
     DrawText wScoreText,$9c00
+    DrawText wLivesText,$9c0D
+
+	call DrawScore
+	call DrawLives
 
 	ld a, 0
 	ld [rWY], a
@@ -65,7 +73,10 @@ UpdateGameplayState::
 
     WaitForVBlank
 
-	call DrawScore
+
+	ld a, [wLives]
+	cp a, 250
+	jp nc, EndGameplay
 
 	; from: https://github.com/eievui5/gb-sprobj-lib
 	; Finally, run the following code during VBlank:
@@ -77,7 +88,14 @@ UpdateGameplayState::
 	
 	jp UpdateGameplayState
 
+EndGameplay:
+	
+    ld a, 0
+    ld [wGameState],a
+    jp NextGameState
+
 
 SECTION "GameplayVariables", WRAM0
 
 wScore:: ds 6
+wLives:: db

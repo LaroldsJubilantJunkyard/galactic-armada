@@ -137,7 +137,6 @@ UpdateBullets_PerBullet:
     DrawSpecificMetasprite bulletMetasprite, b, c
     
 
-    call NextOAMSprite
     
     jp UpdateBullets_Loop
 

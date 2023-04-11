@@ -4,6 +4,7 @@ include "src/main/utils/hardware.inc"
 include "src/main/utils/macros/pointer-macros.inc"
 include "src/main/utils/macros/int16-macros.inc"
 include "src/main/utils/macros/metasprite-macros.inc"
+include "src/main/utils/macros/collision-macros.inc"
 include "src/main/utils/constants.inc"
 
 SECTION "EnemyVariables", WRAM0
@@ -114,6 +115,7 @@ UpdateEnemies_Loop:
     cp 0
     jp z, UpdateEnemies_NextEnemy
 
+
     ; Get our x position
     GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, enemy_xByte, b
     
@@ -121,6 +123,37 @@ UpdateEnemies_Loop:
     ; get our 16-bit y position
     GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, enemy_yLowByte, c
     GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, enemy_yHighByte, d
+
+    push de
+    push bc
+
+UpdateEnemies_Loop_PlayerCollision:
+
+    DeScale16BitInteger c,d
+
+    Get16BitIntegerNonScaledValue wPlayerPositionX, d
+    Get16BitIntegerNonScaledValue wPlayerPositionY, e
+    
+
+    ; Check the x distances. Jump to 'CheckCurrentEnemyAgainstBullets_NextLoop' on failure
+    CheckDistanceAndJump b,d, 16, UpdateEnemies_Loop_PlayerCollision_NoCollision
+
+    ; Check the y distances. Jump to 'CheckCurrentEnemyAgainstBullets_NextLoop' on failure
+    CheckDistanceAndJump c,e, 16, UpdateEnemies_Loop_PlayerCollision_NoCollision
+
+    call DamagePlayer
+    call DrawLives
+
+    pop bc
+    pop de
+    
+    jp UpdateEnemies_DeActivateIfOutOfBounds
+
+UpdateEnemies_Loop_PlayerCollision_NoCollision::
+
+    pop bc
+    pop de
+
 
     ; Get our move speed
     GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, enemy_speedByte, e
@@ -139,8 +172,6 @@ UpdateEnemies_Loop:
 
     
     DrawSpecificMetasprite enemyShipMetasprite, b, c
-
-    call NextOAMSprite
     
     ; check for collisions against bulelts
     call CheckCurrentEnemyAgainstBullets
