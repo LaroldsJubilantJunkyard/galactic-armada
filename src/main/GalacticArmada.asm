@@ -39,7 +39,7 @@ NextGameState::
 	call LoadTextFontIntoVRAM
 
 	; Turn the LCD on
-	ld a, LCDCF_ON  | LCDCF_BGON|LCDCF_OBJON | LCDCF_OBJ16 | LCDCF_WINON | LCDCF_WIN9C00|LCDCF_BG9800
+	ld a, LCDCF_ON  | LCDCF_BGON|LCDCF_OBJON | LCDCF_OBJ16 | LCDCF_WINON | LCDCF_WIN9C00
 	ld [rLCDC], a
 
 	call ClearBackground;

@@ -45,7 +45,7 @@ LYCEquals8:
 	ldh [rLYC], a
 
 	; Turn the LCD on including sprites. But no window
-	ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJON | LCDCF_OBJ16 | LCDCF_WINOFF | LCDCF_WIN9C00|LCDCF_BG9800
+	ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJON | LCDCF_OBJ16 | LCDCF_WINOFF | LCDCF_WIN9C00
 	ldh [rLCDC], a
 
 	jp EndStatInterrupts
@@ -57,7 +57,7 @@ LYCEqualsZero:
 	ldh [rLYC], a
 
 	; Turn the LCD on including the window. But no sprites
-	ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJOFF | LCDCF_OBJ16| LCDCF_WINON | LCDCF_WIN9C00|LCDCF_BG9800
+	ld a, LCDCF_ON | LCDCF_BGON | LCDCF_OBJOFF | LCDCF_OBJ16| LCDCF_WINON | LCDCF_WIN9C00
 	ldh [rLCDC], a
 
 

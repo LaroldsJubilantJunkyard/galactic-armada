@@ -91,7 +91,7 @@ DrawStarField_Loop:
 	dec bc
 	ld a, b
 	or a, c
-	jp nz, DrawStarField_Loop ; Jump to COpyTiles, if the z flag is not set. (the last operation had a non zero result)
+	jp nz, DrawStarField_Loop ; Jump to DrawStarField_Loop, if the z flag is not set. (the last operation had a non zero result)
 
 	; Copy the tilemap
 	ld de, starFieldMap
