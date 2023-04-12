@@ -1,13 +1,54 @@
 INCLUDE "src/main/utils/hardware.inc"
 INCLUDE "src/main/utils/macros/vblank-macros.inc"
 INCLUDE "src/main/utils/macros/text-macros.inc"
+INCLUDE "src/main/utils/macros/int16-macros.inc"
 
 
 SECTION "GameplayState", ROM0
 
-
 wScoreText::  db "score", 255
 wLivesText::  db "lives", 255
+
+starFieldMap: INCBIN "src/generated/backgrounds/star-field.tilemap"
+starFieldMapEnd:
+ 
+starFieldTileData: INCBIN "src/generated/backgrounds/star-field.2bpp"
+starFieldTileDataEnd:
+
+DrawStarField::
+
+	; Copy the tile data
+	ld de, starFieldTileData ; de contains the address where data will be copied from;
+	ld hl, $9340 ; hl contains the address where data will be copied to;
+	ld bc, starFieldTileDataEnd - starFieldTileData ; bc contains how many bytes we have to copy.
+	
+DrawStarField_Loop: 
+	ld a, [de]
+	ld [hli], a
+	inc de
+	dec bc
+	ld a, b
+	or a, c
+	jp nz, DrawStarField_Loop ; Jump to DrawStarField_Loop, if the z flag is not set. (the last operation had a non zero result)
+
+	; Copy the tilemap
+	ld de, starFieldMap
+	ld hl, $9800
+	ld bc, starFieldMapEnd - starFieldMap
+
+DrawStarField_Tilemap:
+	ld a, [de]
+	add a, 52
+	ld [hli], a
+	inc de
+	dec bc
+	ld a, b
+	or a, c
+	jp nz, DrawStarField_Tilemap
+
+	ret
+
+
 InitGameplayState::
 
 	ld a, 3
@@ -95,7 +136,41 @@ EndGameplay:
     jp NextGameState
 
 
+InitializeBackground::
+
+	ld a, 0
+	ld [mBackgroundScroll+0],a
+	ld a, 0
+	ld [mBackgroundScroll+1],a
+
+	ret
+
+; This is called during gameplay state on every frame
+ScrollBackground::
+
+	; Increase our scaled integer by 5
+	Increase16BitInteger [mBackgroundScroll+0], [mBackgroundScroll+1], 5
+
+	; Get our true (non-scaled) value, and save it for later usage
+    Get16BitIntegerNonScaledValue mBackgroundScroll, b
+    ld a,b
+	ld [mBackgroundScrollReal], a
+
+	ret
+
+; This is called during vblanks
+UpdateBackgroundPosition::
+
+	; Tell our background to use our previously saved true value
+	ld a, [mBackgroundScrollReal]
+	ld [rSCY], a
+
+	ret
+
 SECTION "GameplayVariables", WRAM0
+
+mBackgroundScroll: dw
+mBackgroundScrollReal: db
 
 wScore:: ds 6
 wLives:: db

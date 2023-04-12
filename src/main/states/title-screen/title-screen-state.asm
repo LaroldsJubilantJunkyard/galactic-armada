@@ -8,6 +8,49 @@ SECTION "TitleScreenState", ROM0
 
 wPressPlayText::  db "press a to play", 255
 
+
+ 
+titleScreenTileData: INCBIN "src/generated/backgrounds/title-screen.2bpp"
+titleScreenTileDataEnd:
+
+ 
+titleScreenTileMap: INCBIN "src/generated/backgrounds/title-screen.tilemap"
+titleScreenTileMapEnd:
+
+
+DrawTitleScreen::
+
+	; Copy the tile data
+	ld de, titleScreenTileData ; de contains the address where data will be copied from;
+	ld hl, $9340 ; hl contains the address where data will be copied to;
+	ld bc, titleScreenTileDataEnd - titleScreenTileData ; bc contains how many bytes we have to copy.
+	
+DrawTitleScreen_Loop: 
+	ld a, [de]
+	ld [hli], a
+	inc de
+	dec bc
+	ld a, b
+	or a, c
+	jp nz, DrawTitleScreen_Loop ; Jump to COpyTiles, if the z flag is not set. (the last operation had a non zero result)
+
+	; Copy the tilemap
+	ld de, titleScreenTileMap
+	ld hl, $9800
+	ld bc, titleScreenTileMapEnd - titleScreenTileMap
+
+DrawTitleScreen_Tilemap:
+	ld a, [de]
+	add a, 52
+	ld [hli], a
+	inc de
+	dec bc
+	ld a, b
+	or a, c
+	jp nz, DrawTitleScreen_Tilemap
+
+	ret
+
 InitTitleScreenState::
 
 	call DrawTitleScreen
