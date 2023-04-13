@@ -135,11 +135,11 @@ UpdateEnemies_Loop_PlayerCollision:
     Get16BitIntegerNonScaledValue wPlayerPositionY, e
     
 
-    ; Check the x distances. Jump to 'CheckCurrentEnemyAgainstBullets_NextLoop' on failure
-    CheckAbsoluteDifferenceAndJump b,d, 16, UpdateEnemies_Loop_PlayerCollision_NoCollision
+    ; Check the x distances. Jump to 'NoCollisionWithPlayer' on failure
+    CheckAbsoluteDifferenceAndJump b,d, 16, NoCollisionWithPlayer
 
-    ; Check the y distances. Jump to 'CheckCurrentEnemyAgainstBullets_NextLoop' on failure
-    CheckAbsoluteDifferenceAndJump c,e, 16, UpdateEnemies_Loop_PlayerCollision_NoCollision
+    ; Check the y distances. Jump to 'NoCollisionWithPlayer' on failure
+    CheckAbsoluteDifferenceAndJump c,e, 16, NoCollisionWithPlayer
 
     call DamagePlayer
     call DrawLives
@@ -147,9 +147,9 @@ UpdateEnemies_Loop_PlayerCollision:
     pop bc
     pop de
     
-    jp UpdateEnemies_DeActivateIfOutOfBounds
+    jp UpdateEnemies_DeActivateEnemy
 
-UpdateEnemies_Loop_PlayerCollision_NoCollision::
+NoCollisionWithPlayer::
 
     pop bc
     pop de
@@ -168,7 +168,7 @@ UpdateEnemies_Loop_PlayerCollision_NoCollision::
     ; See if our non scaled low byte is above 160
     ld a, c
     cp a, 160
-    jp nc, UpdateEnemies_DeActivateIfOutOfBounds
+    jp nc, UpdateEnemies_DeActivateEnemy
 
     
     DrawSpecificMetasprite enemyShipMetasprite, b, c
@@ -180,7 +180,7 @@ UpdateEnemies_Loop_PlayerCollision_NoCollision::
     ; If it below 160, continue on  to deactivate
     jp UpdateEnemies_NextEnemy
 
-UpdateEnemies_DeActivateIfOutOfBounds:
+UpdateEnemies_DeActivateEnemy:
 
     ; if it's y value is grater than 160
     ; Set as inactive
