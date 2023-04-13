@@ -40,3 +40,25 @@ Open .gb file with a gameboy emulator:
  - https://bgb.bircd.org/
 
 > If you want to "Debug" your games, check out '[Emulicious](https://emulicious.net/)'
+
+## Other Links
+
+Here are some other links that you may find interesting and/or helpful.
+
+[**Homebrew Hub**](https://hh.gbdev.io/)
+
+Play Game Boy games online from an archive of hundreds of entries!
+A community-led attempt to collect, archive and save every unofficial game, homebrew, demo, patch, hackrom for Game Boy produced by the community through the last 3 decades of passionate work.
+
+[**Chat Channels**](https://gbdev.io/chat)
+
+The places our community thrives. Here we chat, discuss, help each other and show what we are working on. We have a Discord server, an IRC channel, and more.
+
+[**Pan Docs**](https://gbdev.io/pandocs/)
+
+The single, most comprehensive technical reference to Game Boy available to the public.
+
+[**Awesome List**](https://gbdev.io/resources.html)
+
+Curated list of Game Boy development resources such as tools, guides, technical documentation, tutorials, emulators, related projects and open-source ROMs. Everything you'll ever need to know and see about this console is here.
+If you want to code an emulator, create your own game or simply dive into the software and hardware architecture of the Game Boy, this is the place!
