@@ -1,4 +1,4 @@
-MACRO CheckDistanceAndJump
+MACRO CheckAbsoluteDifferenceAndJump
 
     push bc
     push de

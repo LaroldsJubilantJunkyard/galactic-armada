@@ -64,7 +64,7 @@ CheckCurrentEnemyAgainstBullets_Loop_Y:
     DeScale16BitInteger e,d
 
     ; Check the y distances. Jump to 'CheckCurrentEnemyAgainstBullets_NextLoop' on failure
-    CheckDistanceAndJump b,e, 16, CheckCurrentEnemyAgainstBullets_NextLoop
+    CheckAbsoluteDifferenceAndJump b,e, 16, CheckCurrentEnemyAgainstBullets_NextLoop
 
 
 CheckCurrentEnemyAgainstBullets_Loop_X:
@@ -86,7 +86,7 @@ CheckCurrentEnemyAgainstBullets_Loop_X:
     ld e ,a
 
     ; Check the x distances. Jump to 'CheckCurrentEnemyAgainstBullets_NextLoop' on failure
-    CheckDistanceAndJump b, e, 12,CheckCurrentEnemyAgainstBullets_NextLoop
+    CheckAbsoluteDifferenceAndJump b, e, 12,CheckCurrentEnemyAgainstBullets_NextLoop
 
     
     ; set the first byte for the current bullet/enemy as zero for inactive

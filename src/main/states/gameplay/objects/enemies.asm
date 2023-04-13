@@ -136,10 +136,10 @@ UpdateEnemies_Loop_PlayerCollision:
     
 
     ; Check the x distances. Jump to 'CheckCurrentEnemyAgainstBullets_NextLoop' on failure
-    CheckDistanceAndJump b,d, 16, UpdateEnemies_Loop_PlayerCollision_NoCollision
+    CheckAbsoluteDifferenceAndJump b,d, 16, UpdateEnemies_Loop_PlayerCollision_NoCollision
 
     ; Check the y distances. Jump to 'CheckCurrentEnemyAgainstBullets_NextLoop' on failure
-    CheckDistanceAndJump c,e, 16, UpdateEnemies_Loop_PlayerCollision_NoCollision
+    CheckAbsoluteDifferenceAndJump c,e, 16, UpdateEnemies_Loop_PlayerCollision_NoCollision
 
     call DamagePlayer
     call DrawLives
