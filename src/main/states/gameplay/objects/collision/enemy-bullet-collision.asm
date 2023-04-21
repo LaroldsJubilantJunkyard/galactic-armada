@@ -19,8 +19,12 @@ CheckCurrentEnemyAgainstBullets::
     ld a, 0
     ld [wEnemyBulletCollisionCounter], a
 
-    ; Copy our bullets address
-    CopyAddressToPointerVariable wBullets, wBulletAddresses
+    
+    ; Copy our bullets address into wBulletAddress
+    ld a, LOW(wBullets)
+    ld [wBulletAddresses+0], a
+    ld a, HIGH(wBullets)
+    ld [wBulletAddresses+1], a
 
     jp CheckCurrentEnemyAgainstBullets_Loop
 
@@ -36,44 +40,51 @@ CheckCurrentEnemyAgainstBullets_NextLoop:
     ret nc
 
     ; Increase the  data our address is pointing to
-    IncreasePointerVariableAddress wBulletAddresses, PER_BULLET_BYTES_COUNT
+    ld a, [wBulletAddresses+0]
+    add a, PER_BULLET_BYTES_COUNT
+    ld  [wBulletAddresses+0], a
+    ld a, [wBulletAddresses+1]
+    adc a, 0
+    ld  [wBulletAddresses+1], a
 
 
 CheckCurrentEnemyAgainstBullets_Loop:
 
 
-CheckCurrentEnemyAgainstBullets_Loop_Y:
-
-    ; check if bullet is active
-    GetPointerVariableValue wBulletAddresses, 0, b
-    ld a, b
+    ld a, [wBulletAddresses+0]
+    ld l, a
+    ld a, [wBulletAddresses+1]
+    ld h, a
+    ld a, [hli]
     cp a, 1
     jp nz, CheckCurrentEnemyAgainstBullets_NextLoop
 
-    
-    ; get our bullet 16-bit y position
-    GetPointerVariableValue wBulletAddresses, 2, b
-    GetPointerVariableValue wBulletAddresses, 3, c
-
-    DeScale16BitInteger b,c
-    
-    ; get our enemy 16-bit y position
-    GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 2, e
-    GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 3, d
-
-    DeScale16BitInteger e,d
-
-    ; Check the y distances. Jump to 'CheckCurrentEnemyAgainstBullets_NextLoop' on failure
-    CheckAbsoluteDifferenceAndJump b,e, 16, CheckCurrentEnemyAgainstBullets_NextLoop
-
-
 CheckCurrentEnemyAgainstBullets_Loop_X:
+
 
     ; Get our x position
     ; b = bullet
     ; c = enemy address
-    GetPointerVariableValue wBulletAddresses, 1, b
-    GetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 1, e
+    ld a, [hli]
+    ld b, a
+
+    ;preserve hl for bullets
+    ; while we get our enemies 
+    push hl
+    
+    ld a, [wUpdateEnemiesCurrentEnemyAddress+0]
+    ld l, a
+    ld a, [wUpdateEnemiesCurrentEnemyAddress+1]
+    ld h, a
+
+    ; Move to the x value
+    inc hl
+
+    ld a, [hl]
+    ld e, a
+
+    ; restore our hl for bullets
+    pop hl
 
     ; Add a 4 pixel offset to the bullet posiition
     ld a, b
@@ -85,17 +96,144 @@ CheckCurrentEnemyAgainstBullets_Loop_X:
     add a, 8
     ld e ,a
 
-    ; Check the x distances. Jump to 'CheckCurrentEnemyAgainstBullets_NextLoop' on failure
-    CheckAbsoluteDifferenceAndJump b, e, 12,CheckCurrentEnemyAgainstBullets_NextLoop
+    push hl
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; Start: Checking the absolute difference
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    ; The first value
+    ld a, b
+    ld [wObject1Value], a
+
+    ; The second value
+    ld a, e
+    ld [wObject2Value], a
+
+    ; Save if the minimum distance
+    ld a, 12
+    ld [wSize], a
+
+    call CheckObjectPositionDifference
+    
+    ld a, [wResult]
+    cp a, 0
+    jp z, CheckCurrentEnemyAgainstBullets_JumpToNextLoop
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; End: Checking the absolute difference
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    pop hl
+    
+CheckCurrentEnemyAgainstBullets_Loop_Y:
+
+    ; get our bullet 16-bit y position
+    ld a, [hli]
+    ld b, a
+
+    ld a, [hli]
+    ld c, a
+
+    ; Descale our 16 bit y position
+    srl c
+    rr b
+    srl c
+    rr b
+    srl c
+    rr b
+    srl c
+    rr b
+
+    push hl
+
+    ld a, [wUpdateEnemiesCurrentEnemyAddress+0]
+    ld l, a
+    ld a, [wUpdateEnemiesCurrentEnemyAddress+1]
+    ld h, a
+
+    inc hl
+    inc hl
+
+    ; get our enemy 16-bit y position
+    ld a, [hli]
+    ld e, a
+
+    ld a, [hl]
+    ld d, a
+
+    pop hl
+
+    ; Descale our enemy 16 bit y position
+    srl d
+    rr e
+    srl d
+    rr e
+    srl d
+    rr e
+    srl d
+    rr e
+
+    ; preserve our bullet pointer
+    push hl
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; Start: Checking the absolute difference
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    ; The first value
+    ld a, b
+    ld [wObject1Value], a
+
+    ; The second value
+    ld a, e
+    ld [wObject2Value], a
+
+    ; Save if the minimum distance
+    ld a, 16
+    ld [wSize], a
+
+    call CheckObjectPositionDifference
+    
+    ld a, [wResult]
+    cp a, 0
+    jp z, CheckCurrentEnemyAgainstBullets_JumpToNextLoop
+    jp CheckCurrentEnemyAgainstBullets_Loop_Collision
+
+
+CheckCurrentEnemyAgainstBullets_JumpToNextLoop:
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; End: Checking the absolute difference
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    pop hl ; restore our bullets pointer
+    jp CheckCurrentEnemyAgainstBullets_NextLoop
+
+CheckCurrentEnemyAgainstBullets_Loop_Collision:
+
+
+    pop hl ; restore our bullets pointer
 
     
-    ; set the first byte for the current bullet/enemy as zero for inactive
-    SetPointerVariableValue wBulletAddresses, 0,0
-    SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 0, 0
+    ld a, [wBulletAddresses+0]
+    ld l, a
+    ld a, [wBulletAddresses+1]
+    ld h, a
 
-    ; set the second byte for the current bullet/enemy as zero for x=0 (move offscreeen)
-    SetPointerVariableValue wBulletAddresses, 1,0
-    SetPointerVariableValue wUpdateEnemiesCurrentEnemyAddress, 1, 0
+    ; set the active byte  and x value to 0 for bullets
+    ld a, 0
+    ld [hli], a
+    ld [hl], a
+
+    ld a, [wUpdateEnemiesCurrentEnemyAddress+0]
+    ld l, a
+    ld a, [wUpdateEnemiesCurrentEnemyAddress+1]
+    ld h, a
+
+    ; set the active byte  and x value to 0 for enemies
+    ld a, 0
+    ld [hli], a
+    ld [hl], a
     
     call IncreaseScore;
     call DrawScore

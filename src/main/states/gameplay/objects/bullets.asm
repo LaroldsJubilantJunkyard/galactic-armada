@@ -59,8 +59,14 @@ InitializeBullets_Loop:
     ld [hl], a
 
     ; Increase the address
-    Increase16BitInteger l, h, PER_BULLET_BYTES_COUNT
+    ld a, l
+    add a, PER_BULLET_BYTES_COUNT
+    ld l, a
+    ld a, h
+    adc a, 0
+    ld h, a
 
+    ; Increase how many bullets we have initailized
     ld a, b
     inc a
     ld b ,a
@@ -80,7 +86,12 @@ UpdateBullets::
     ld a, 0
     ld [wUpdateBulletsCounter], a
 
-    CopyAddressToPointerVariable wBullets, wUpdateBulletsCurrentBulletAddress
+    ; copy wBullets,  into wUpdateBulletsCurrentBulletAddress    
+    ld a, LOW(wBullets)
+    ld [wUpdateBulletsCurrentBulletAddress+0], a
+    ld a, HIGH(wBullets)
+    ld [wUpdateBulletsCurrentBulletAddress+1], a
+
 
     jp UpdateBullets_PerBullet
 
@@ -97,35 +108,61 @@ UpdateBullets_Loop:
     cp a, MAX_BULLET_COUNT
     ret nc
 
-
     ; Increase the bullet data our address is pointingtwo
-    IncreasePointerVariableAddress wUpdateBulletsCurrentBulletAddress, PER_BULLET_BYTES_COUNT
+    ld a, [wUpdateBulletsCurrentBulletAddress+0]
+    add a, PER_BULLET_BYTES_COUNT
+    ld [wUpdateBulletsCurrentBulletAddress+0], a
+    ld a, [wUpdateBulletsCurrentBulletAddress+1]
+    adc a, 0
+    ld [wUpdateBulletsCurrentBulletAddress+1], a
+
 
 UpdateBullets_PerBullet:
 
 
     ; The first byte is if the bullet is active
     ; If it's zero, it's inactive, go to the loop section
-    GetPointerVariableValue wUpdateBulletsCurrentBulletAddress, bullet_activeByte, b
-    ld a, b
+    ld a, [wUpdateBulletsCurrentBulletAddress+0]
+    ld l, a
+    ld a, [wUpdateBulletsCurrentBulletAddress+1]
+    ld h, a
+    ld a, [hli]
     cp a, 0
     jp z, UpdateBullets_Loop
-    
 
     ; Get our x position
-    GetPointerVariableValue wUpdateBulletsCurrentBulletAddress, bullet_xByte, b
-    
+    ld a, [hli]
+    ld b, a
 
     ; get our 16-bit y position
-    GetPointerVariableValue wUpdateBulletsCurrentBulletAddress, bullet_yLowByte, c
-    GetPointerVariableValue wUpdateBulletsCurrentBulletAddress, bullet_yHighByte, d
+    ld a, [hli]
+    ld c, a
+    ld a, [hld] ; 'hld' instead of 'hli' because we're going to re-set the y position afterwards
+    ld d, a
 
-    Decrease16BitInteger c,d,BULLET_MOVE_SPEED
+    ; Decrease our y position by BULLET_MOVE_SPEED
+    ld a, c
+    sub a, BULLET_MOVE_SPEED
+    ld c, a
+    ld a, d
+    sbc a, 0
+    ld d, a
 
-    SetPointerVariableValue wUpdateBulletsCurrentBulletAddress, bullet_yLowByte,c
-    SetPointerVariableValue wUpdateBulletsCurrentBulletAddress, bullet_yHighByte,d
+    ; set our new low and high bytes
+    ld a, c
+    ld [hli], a
+    ld a, d
+    ld [hli], a
 
-    DeScale16BitInteger c,d
+    ; Descale our y position
+    srl d
+    rr c
+    srl d
+    rr c
+    srl d
+    rr c
+    srl d
+    rr c
 
     ; See if our non scaled low byte is above 160
     ld a, c
@@ -133,18 +170,48 @@ UpdateBullets_PerBullet:
     ; If it below 160, continue on  to deactivate
     jp nc, UpdateBullets_DeActivateIfOutOfBounds
     
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; Drawing a metasprite
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+     ; Save the address of the metasprite into the 'wMetaspriteAddress' variable
+    ; Our DrawMetasprites functoin uses that variable
+    ld a, LOW(bulletMetasprite)
+    ld [wMetaspriteAddress+0], a
+    ld a, HIGH(bulletMetasprite)
+    ld [wMetaspriteAddress+1], a
+
+    ; Save the x position
+    ld a, b
+    ld [wMetaspriteX],a
+
+    ; Save the y position
+    ld a, c
+    ld [wMetaspriteY],a
+
+    ; Actually call the 'DrawMetasprites function
+    call DrawMetasprites;
     
-    DrawSpecificMetasprite bulletMetasprite, b, c
-    
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;; Drawing a metasprite
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;    
 
     
     jp UpdateBullets_Loop
 
 UpdateBullets_DeActivateIfOutOfBounds:
 
+ ; The first byte is if the bullet is active
+    ; If it's zero, it's inactive, go to the loop section
+    ld a, [wUpdateBulletsCurrentBulletAddress+0]
+    ld l, a
+    ld a, [wUpdateBulletsCurrentBulletAddress+1]
+    ld h, a
+
     ; if it's y value is grater than 160
     ; Set as inactive
-    SetPointerVariableValue wUpdateBulletsCurrentBulletAddress, bullet_activeByte,0
+    ld a, 0
+    ld [hl], a
 
     ; Decrease counter
     ld a,[wActiveBulletCounter]
@@ -204,7 +271,12 @@ FireNextBullet_Loop:
 FireNextBullet_NextBullet:
 
     ; Increase the address
-    Increase16BitInteger l, h, PER_BULLET_BYTES_COUNT
+    ld a, l
+    add a, PER_BULLET_BYTES_COUNT
+    ld l, a
+    ld a, h
+    adc a, 0
+    ld h, a
 
     ld a,[wUpdateBulletsCounter]
     inc a
