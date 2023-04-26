@@ -1,4 +1,5 @@
 INCLUDE "src/main/utils/hardware.inc"
+INCLUDE "src/main/utils/macros/text-macros.inc"
 
 SECTION "GameplayState", ROM0
 

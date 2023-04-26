@@ -1,9 +1,6 @@
 
 include "src/main/utils/hardware.inc"
 include "src/main/utils/hardware.inc"
-include "src/main/utils/macros/pointer-macros.inc"
-include "src/main/utils/macros/int16-macros.inc"
-include "src/main/utils/macros/metasprite-macros.inc"
 include "src/main/utils/constants.inc"
 
 SECTION "PlayerVariables", WRAM0
@@ -38,17 +35,22 @@ InitializePlayer::
     ld [mPlayerFlash+1],a
 
     ; Place in the middle of the screen
-    Set16BitIntegerFromNonScaledValue wPlayerPositionX,80
-    Set16BitIntegerFromNonScaledValue wPlayerPositionY,80
+    ld a, 0
+    ld [wPlayerPositionX+0], a
+    ld [wPlayerPositionY+0], a
+
+    ld a, 5
+    ld [wPlayerPositionX+1], a
+    ld [wPlayerPositionY+1], a
 
     
-CopyHappyFace:
+CopyPlayerTileDataIntoVRAM:
 
 	ld de, playerShipTileData
 	ld hl, PLAYER_TILES_START
 	ld bc, playerShipTileDataEnd - playerShipTileData
 
-CopyHappyFace_Loop:
+CopyPlayerTileDataIntoVRAM_Loop:
 
 	ld a, [de]
 	ld [hli], a
@@ -56,7 +58,7 @@ CopyHappyFace_Loop:
 	dec bc
 	ld a, b
 	or a, c
-	jp nz, CopyHappyFace_Loop
+	jp nz, CopyPlayerTileDataIntoVRAM_Loop
 
     ret;
 
@@ -143,10 +145,63 @@ UpdatePlayer_UpdateSprite_StopFlashing:
 
 UpdatePlayer_UpdateSprite:
 
-    Get16BitIntegerNonScaledValue wPlayerPositionX, b
-    Get16BitIntegerNonScaledValue wPlayerPositionY, c
+    ; Get the unscaled player x position in b
+    ld a, [wPlayerPositionX+0]
+    ld b, a
+    ld a, [wPlayerPositionX+1]
+    ld d, a
+    
+    srl d
+    rr b
+    srl d
+    rr b
+    srl d
+    rr b
+    srl d
+    rr b
 
-    DrawSpecificMetasprite playerTestMetaSprite, b, c
+    ; Get the unscaled player y position in c
+    ld a, [wPlayerPositionY+0]
+    ld c, a
+    ld a, [wPlayerPositionY+1]
+    ld e, a
+
+    srl e
+    rr c
+    srl e
+    rr c
+    srl e
+    rr c
+    srl e
+    rr c
+    
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Drawing the palyer metasprite
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+    ; Save the address of the metasprite into the 'wMetaspriteAddress' variable
+    ; Our DrawMetasprites functoin uses that variable
+    ld a, LOW(playerTestMetaSprite)
+    ld [wMetaspriteAddress+0], a
+    ld a, HIGH(playerTestMetaSprite)
+    ld [wMetaspriteAddress+1], a
+
+
+    ; Save the x position
+    ld a, b
+    ld [wMetaspriteX],a
+
+    ; Save the y position
+    ld a, c
+    ld [wMetaspriteY],a
+
+    ; Actually call the 'DrawMetasprites function
+    call DrawMetasprites;
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     ret
 
@@ -155,7 +210,23 @@ TryShoot:
 	and a, PADF_A
     ret nz
 
-    Get16BitIntegerNonScaledValue wPlayerPositionX, b
+    
+
+    ; Get the unscaled player x position in b
+    ld a, [wPlayerPositionX+0]
+    ld b, a
+    ld a, [wPlayerPositionX+1]
+    ld d, a
+    
+    srl d
+    rr b
+    srl d
+    rr b
+    srl d
+    rr b
+    srl d
+    rr b
+
     ld a,b
     ld [wNextBullet], a
 
@@ -186,24 +257,52 @@ DamagePlayer::
 
 MoveUp:
 
-    Decrease16BitInteger [wPlayerPositionY+0], [wPlayerPositionY+1], PLAYER_MOVE_SPEED
+    ; decrease the player's y position
+    ld a, [wPlayerPositionY+0]
+    sub a, PLAYER_MOVE_SPEED
+    ld [wPlayerPositionY+0], a
+
+    ld a, [wPlayerPositionY+1]
+    sbc a, 0
+    ld [wPlayerPositionY+1], a
 
     ret
 
 MoveDown:
 
-    Increase16BitInteger [wPlayerPositionY+0], [wPlayerPositionY+1], PLAYER_MOVE_SPEED
+    ; increase the player's y position
+    ld a, [wPlayerPositionY+0]
+    add a, PLAYER_MOVE_SPEED
+    ld [wPlayerPositionY+0], a
+
+    ld a, [wPlayerPositionY+1]
+    adc a, 0
+    ld [wPlayerPositionY+1], a
 
     ret
 
 MoveLeft:
 
-    Decrease16BitInteger [wPlayerPositionX+0], [wPlayerPositionX+1], PLAYER_MOVE_SPEED
+    ; decrease the player's x position
+    ld a, [wPlayerPositionX+0]
+    sub a, PLAYER_MOVE_SPEED
+    ld [wPlayerPositionX+0], a
+
+    ld a, [wPlayerPositionX+1]
+    sbc a, 0
+    ld [wPlayerPositionX+1], a
     ret
 
 MoveRight:
 
-    Increase16BitInteger [wPlayerPositionX+0], [wPlayerPositionX+1], PLAYER_MOVE_SPEED
+    ; increase the player's x position
+    ld a, [wPlayerPositionX+0]
+    add a, PLAYER_MOVE_SPEED
+    ld [wPlayerPositionX+0], a
+
+    ld a, [wPlayerPositionX+1]
+    adc a, 0
+    ld [wPlayerPositionX+1], a
 
     ret
 
