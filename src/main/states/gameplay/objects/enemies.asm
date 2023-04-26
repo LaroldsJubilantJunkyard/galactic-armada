@@ -288,8 +288,31 @@ NoCollisionWithPlayer::
     cp a, 160
     jp nc, UpdateEnemies_DeActivateEnemy
 
-    
-    DrawSpecificMetasprite enemyShipMetasprite, b, c
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; call the 'DrawMetasprites function. setup variables and call
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    ; Save the address of the metasprite into the 'wMetaspriteAddress' variable
+    ; Our DrawMetasprites functoin uses that variable
+    ld a, LOW(enemyShipMetasprite)
+    ld [wMetaspriteAddress+0], a
+    ld a, HIGH(enemyShipMetasprite)
+    ld [wMetaspriteAddress+1], a
+
+    ; Save the x position
+    ld a, b
+    ld [wMetaspriteX],a
+
+    ; Save the y position
+    ld a, c
+    ld [wMetaspriteY],a
+
+    ; Actually call the 'DrawMetasprites function
+    call DrawMetasprites;
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     
     ; check for collisions against bulelts
     call CheckCurrentEnemyAgainstBullets
