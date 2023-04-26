@@ -1,5 +1,4 @@
 INCLUDE "src/main/utils/hardware.inc"
-INCLUDE "src/main/utils/macros/vblank-macros.inc"
 
 
 SECTION "Header", ROM0[$100]
@@ -17,7 +16,15 @@ EntryPoint:
 	ld [wGameState], a
 
 ; Do not turn the LCD off outside of VBlank
-	WaitForVBlank
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Wait a small amount of time
+    ; Save our count in this variable
+    ld a, 1
+    ld [wVBlankCount], a
+
+    ; Call our function that performs the code
+    call WaitForVBlankFunction
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 	; from: https://github.com/eievui5/gb-sprobj-lib
 	; The library is relatively simple to get set up. First, put the following in your initialization code:
@@ -51,7 +58,15 @@ NextGameState::
 	ld [rOBP0], a
 
 	; Do not turn the LCD off outside of VBlank
-	WaitForVBlank
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Wait a small amount of time
+    ; Save our count in this variable
+    ld a, 1
+    ld [wVBlankCount], a
+
+    ; Call our function that performs the code
+    call WaitForVBlankFunction
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 	; Turn the LCD off
 	ld a, 0

@@ -28,39 +28,3 @@ CHARMAP "w", 48
 CHARMAP "x", 49
 CHARMAP "y", 50
 CHARMAP "z", 51
-
-; Example DrawText wMyTextHere, $9000
-MACRO DrawText
-
-    ; Save our original values
-    push de
-    push hl
-
-    ; Call Our function that draws text onto background/window tiles
-    ld de, \2
-    ld hl, \1
-    call DrawTextTilesLoop
-
-    ; restore our original values
-    pop hl
-    pop de
-
-    ENDM
-
-; Example TypewriteText wMyTextHere, $9000
-MACRO TypewriteText
-
-    ; Save our original values
-    push de
-    push hl
-    
-    ; Call Our function that typewrites text onto background/window tiles
-    ld de, \2
-    ld hl, \1
-    call DrawText_WithTypewriterEffect
-
-    ; restore our original values
-    pop hl
-    pop de
-
-    ENDM

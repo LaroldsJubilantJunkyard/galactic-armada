@@ -1,7 +1,4 @@
 INCLUDE "src/main/utils/hardware.inc"
-INCLUDE "src/main/utils/macros/vblank-macros.inc"
-INCLUDE "src/main/utils/macros/text-macros.inc"
-INCLUDE "src/main/utils/macros/int16-macros.inc"
 
 
 SECTION "GameplayHUD", ROM0

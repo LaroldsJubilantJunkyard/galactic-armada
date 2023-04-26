@@ -1,7 +1,5 @@
 INCLUDE "src/main/utils/hardware.inc"
-INCLUDE "src/main/utils/macros/vblank-macros.inc"
 INCLUDE "src/main/utils/macros/text-macros.inc"
-INCLUDE "src/main/utils/macros/input-macros.inc"
 
 
 SECTION "StoryStateASM", ROM0
@@ -27,21 +25,72 @@ InitStoryState::
 	
 UpdateStoryState::
 
-    TypewriteText Story.Line1, $9821
-    TypewriteText Story.Line2, $9861
-    TypewriteText Story.Line3, $98A1
-    TypewriteText Story.Line4, $98E1
 
-    WaitForKey PADF_A
+    ; Call Our function that typewrites text onto background/window tiles
+    ld de, $9821
+    ld hl, Story.Line1
+    call DrawText_WithTypewriterEffect
+
+
+    ; Call Our function that typewrites text onto background/window tiles
+    ld de, $9861
+    ld hl, Story.Line2
+    call DrawText_WithTypewriterEffect
+
+
+    ; Call Our function that typewrites text onto background/window tiles
+    ld de, $98A1
+    ld hl, Story.Line3
+    call DrawText_WithTypewriterEffect
+
+
+    ; Call Our function that typewrites text onto background/window tiles
+    ld de, $98E1
+    ld hl, Story.Line4
+    call DrawText_WithTypewriterEffect
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Wait for A
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    ; Save the passed value into the variable: mWaitKey
+    ; The WaitForKeyFunction always checks against this vriable
+    ld a,PADF_A
+    ld [mWaitKey], a
+
+    call WaitForKeyFunction
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     call ClearBackground
 
-    TypewriteText Story.Line5, $9821
-    TypewriteText Story.Line6, $9861
-    TypewriteText Story.Line7, $98A1
+
+    ; Call Our function that typewrites text onto background/window tiles
+    ld de, $9821
+    ld hl, Story.Line5
+    call DrawText_WithTypewriterEffect
 
 
-    WaitForKey PADF_A
+    ; Call Our function that typewrites text onto background/window tiles
+    ld de, $9861
+    ld hl, Story.Line6
+    call DrawText_WithTypewriterEffect
+
+
+    ; Call Our function that typewrites text onto background/window tiles
+    ld de, $98A1
+    ld hl, Story.Line7
+    call DrawText_WithTypewriterEffect
+
+
+    ; Save the passed value into the variable: mWaitKey
+    ; The WaitForKeyFunction always checks against this vriable
+    ld a,PADF_A
+    ld [mWaitKey], a
+
+    call WaitForKeyFunction
 
     call ClearBackground
 

@@ -1,8 +1,5 @@
-include "src/main/utils/macros/oam-macros.inc"
+
 include "src/main/utils/hardware.inc"
-include "src/main/utils/macros/vblank-macros.inc"
-include "src/main/utils/macros/pointer-macros.inc"
-include "src/main/utils/macros/int16-macros.inc"
 
 SECTION "Background", ROM0
  

@@ -1,6 +1,4 @@
 
-INCLUDE "src/main/utils/macros/vblank-macros.inc"
-INCLUDE "src/main/utils/macros/text-macros.inc"
 SECTION "Text", ROM0
 
 textFontTileData: INCBIN "src/generated/backgrounds/text-font.2bpp"
@@ -46,9 +44,18 @@ DrawTextTilesLoop::
 
 DrawText_WithTypewriterEffect::
 
-    ; Wait a small amount of time
-    WaitForVBlankNTimes 3
 
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Wait a small amount of time
+    ; Save our count in this variable
+    ld a, 3
+    ld [wVBlankCount], a
+
+    ; Call our function that performs the code
+    call WaitForVBlankFunction
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    
     ; Check for the end of string character 255
     ld a, [hl]
     cp 255

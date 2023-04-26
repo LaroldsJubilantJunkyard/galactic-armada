@@ -1,6 +1,4 @@
 INCLUDE "src/main/utils/hardware.inc"
-INCLUDE "src/main/utils/macros/input-macros.inc"
-INCLUDE "src/main/utils/macros/vblank-macros.inc"
 INCLUDE "src/main/utils/macros/text-macros.inc"
 
 SECTION "TitleScreenState", ROM0
@@ -54,7 +52,20 @@ DrawTitleScreen_Tilemap:
 InitTitleScreenState::
 
 	call DrawTitleScreen
-    DrawText wPressPlayText, $99C3
+
+	
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Draw the press play text
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+	; Call Our function that draws text onto background/window tiles
+    ld de, $99C3
+    ld hl, wPressPlayText
+    call DrawTextTilesLoop
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 	; Turn the LCD on
 	ld a, LCDCF_ON  | LCDCF_BGON|LCDCF_OBJON | LCDCF_OBJ16
@@ -64,7 +75,19 @@ InitTitleScreenState::
 	
 UpdateTitleScreenState::
 
-    WaitForKey PADF_A
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Wait for A
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    ; Save the passed value into the variable: mWaitKey
+    ; The WaitForKeyFunction always checks against this vriable
+    ld a,PADF_A
+    ld [mWaitKey], a
+
+    call WaitForKeyFunction
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     ld a, 1
     ld [wGameState],a

@@ -1,5 +1,5 @@
 
-INCLUDE "src/main/utils/macros/vblank-macros.inc"
+
 
 SECTION "InputUtilsVariables", WRAM0
 
@@ -45,6 +45,14 @@ WaitForKeyFunction_Loop:
 
 WaitForKeyFunction_NotPressed:
 
-    WaitForVBlank
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Wait a small amount of time
+    ; Save our count in this variable
+    ld a, 1
+    ld [wVBlankCount], a
+
+    ; Call our function that performs the code
+    call WaitForVBlankFunction
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     jp WaitForKeyFunction_Loop
