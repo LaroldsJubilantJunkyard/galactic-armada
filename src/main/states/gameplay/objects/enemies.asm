@@ -1,10 +1,4 @@
-
-include "src/main/utils/macros/oam-macros.inc"
 include "src/main/utils/hardware.inc"
-include "src/main/utils/macros/pointer-macros.inc"
-include "src/main/utils/macros/int16-macros.inc"
-include "src/main/utils/macros/metasprite-macros.inc"
-include "src/main/utils/macros/collision-macros.inc"
 include "src/main/utils/constants.inc"
 
 SECTION "EnemyVariables", WRAM0
@@ -63,9 +57,14 @@ InitializeEnemies_Loop:
     ; Set as inactive
     ld a, 0
     ld [hl], a
-
+    
     ; Increase the address
-    Increase16BitInteger l, h, PER_ENEMY_BYTES_COUNT
+    ld a, l
+    add a, PER_ENEMY_BYTES_COUNT
+    ld l, a
+    ld a, h
+    adc a, 0
+    ld h, a
 
     ld a, b
     inc a
@@ -363,7 +362,12 @@ SpawnNextEnemy:
 SpawnNextEnemy_NextEnemy:
 
     ; Increase the address
-    Increase16BitInteger l, h, PER_ENEMY_BYTES_COUNT
+    ld a, l
+    add a, PER_ENEMY_BYTES_COUNT
+    ld l, a
+    ld a, h
+    adc a, 0
+    ld h, a
 
     ld a, b
     cp a, MAX_ENEMY_COUNT
@@ -461,8 +465,10 @@ GetSpawnPosition:
     
     ld a, b
     ld [wNextEnemy.x], a
-
-    Set16BitIntegerFromNonScaledValue wNextEnemy.y, 0
+    
+    ld a, 0
+    ld [wNextEnemy.y+0], a
+    ld [wNextEnemy.y+1], a
 
     ld a, ENEMY_MOVE_SPEED
     ld [wNextEnemy.speed], a
