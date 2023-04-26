@@ -1,6 +1,5 @@
 
 include "src/main/utils/hardware.inc"
-include "src/main/utils/macros/oam-macros.inc"
 include "src/main/utils/hardware.inc"
 include "src/main/utils/macros/pointer-macros.inc"
 include "src/main/utils/macros/int16-macros.inc"
@@ -99,7 +98,13 @@ UpdatePlayer_UpdateSprite_CheckFlashing:
     or a, c
     jp z, UpdatePlayer_UpdateSprite
 
-    Decrease16BitInteger b,c,5
+    ; decrease bc by 5
+    ld a, b
+    sub a, 5
+    ld b, a
+    ld a, c
+    sbc a, 0
+    ld c, a
     
 
 UpdatePlayer_UpdateSprite_DecreaseFlashing:
@@ -109,7 +114,15 @@ UpdatePlayer_UpdateSprite_DecreaseFlashing:
     ld a, c
     ld [mPlayerFlash+1], a
 
-    DeScale16BitInteger b, c
+    ; descale bc
+    srl c
+    rr b
+    srl c
+    rr b
+    srl c
+    rr b
+    srl c
+    rr b
 
     ld a, b
     cp a, 5

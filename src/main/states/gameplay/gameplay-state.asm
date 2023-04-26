@@ -1,8 +1,4 @@
 INCLUDE "src/main/utils/hardware.inc"
-INCLUDE "src/main/utils/macros/vblank-macros.inc"
-INCLUDE "src/main/utils/macros/text-macros.inc"
-INCLUDE "src/main/utils/macros/int16-macros.inc"
-
 
 SECTION "GameplayState", ROM0
 
@@ -69,8 +65,22 @@ InitGameplayState::
 	call InitializeEnemies
 	call InitStatInterrupts
 	call DrawStarField
-    DrawText wScoreText,$9c00
-    DrawText wLivesText,$9c0D
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+	; Call Our function that draws text onto background/window tiles
+    ld de, $9c00
+    ld hl, wScoreText
+    call DrawTextTilesLoop
+
+	; Call Our function that draws text onto background/window tiles
+    ld de, $9c0D
+    ld hl, wLivesText
+    call DrawTextTilesLoop
+	
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 	call DrawScore
 	call DrawLives
@@ -112,7 +122,14 @@ UpdateGameplayState::
 	call SpawnEnemies
 	call ScrollBackground
 
-    WaitForVBlank
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Save our count,as 1, in this variable
+    ld a, 1
+    ld [wVBlankCount], a
+
+    ; Call our function that performs the code
+    call WaitForVBlankFunction
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 	ld a, [wLives]
@@ -125,7 +142,15 @@ UpdateGameplayState::
 	call hOAMDMA
 	call UpdateBackgroundPosition
 
-    WaitForVBlank
+
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Save our count,as 1, in this variable
+    ld a, 1
+    ld [wVBlankCount], a
+
+    ; Call our function that performs the code
+    call WaitForVBlankFunction
+	;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 	
 	jp UpdateGameplayState
 
@@ -149,10 +174,30 @@ InitializeBackground::
 ScrollBackground::
 
 	; Increase our scaled integer by 5
-	Increase16BitInteger [mBackgroundScroll+0], [mBackgroundScroll+1], 5
+	ld a , [mBackgroundScroll+0]
+	add a , 5
+	ld [mBackgroundScroll+0], a
+	ld a , [mBackgroundScroll+1]
+	adc a , 0
+	ld [mBackgroundScroll+1], a
 
 	; Get our true (non-scaled) value, and save it for later usage
-    Get16BitIntegerNonScaledValue mBackgroundScroll, b
+
+ 	ld a, [mBackgroundScroll+0]
+    ld b,a
+
+    ld a, [mBackgroundScroll+1]
+    ld c,a
+
+    srl c
+    rr b
+    srl c
+    rr b
+    srl c
+    rr b
+    srl c
+    rr b
+
     ld a,b
 	ld [mBackgroundScrollReal], a
 

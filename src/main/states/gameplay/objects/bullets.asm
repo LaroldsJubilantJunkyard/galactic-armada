@@ -1,9 +1,4 @@
-
-include "src/main/utils/macros/oam-macros.inc"
 include "src/main/utils/hardware.inc"
-include "src/main/utils/macros/metasprite-macros.inc"
-include "src/main/utils/macros/pointer-macros.inc"
-include "src/main/utils/macros/int16-macros.inc"
 include "src/main/utils/constants.inc"
 
 SECTION "BulletVariables", WRAM0
