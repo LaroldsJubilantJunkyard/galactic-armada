@@ -1,4 +1,5 @@
-
+INCLUDE "src/main/utils/hardware.inc"
+INCLUDE "src/main/utils/macros/text-macros.inc"
 SECTION "Text", ROM0
 
 textFontTileData: INCBIN "src/generated/backgrounds/text-font.2bpp"
@@ -39,11 +40,89 @@ DrawTextTilesLoop::
     ; move to the next character and next background tile
     jp DrawTextTilesLoop
 
-
-
-
 DrawText_WithTypewriterEffect::
 
+    push de
+    push de
+
+DrawText_WithTypewriterEffect_Loop:
+    
+    ; Check for the end of text character 253
+    ld a, [hl]
+    cp END_OF_MESSAGE
+    jp nz, DrawText_WithTypewriterEffect_Loop_NotEndOfText
+
+    pop de
+    pop de
+
+    ret
+
+DrawText_WithTypewriterEffect_Loop_NotEndOfText:
+
+    ; check new page
+    ld a, [hl]
+    cp NEW_PAGE
+    jp z, DrawText_WithTypewriterEffect_Loop_NewPage
+
+    ; check new page
+    ld a, [hl]
+    cp NEW_LINE
+    jp z, DrawText_WithTypewriterEffect_Loop_NewLine
+
+    jp DrawText_WithTypewriterEffect_Loop_Normal
+
+
+DrawText_WithTypewriterEffect_Loop_NewPage:
+
+    push hl
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ; Wait for A
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    ; Save the passed value into the variable: mWaitKey
+    ; The WaitForKeyFunction always checks against this vriable
+    ld a,PADF_A
+    ld [mWaitKey], a
+
+    call WaitForKeyFunction
+
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+    call ClearBackground
+
+    pop hl
+
+    inc hl
+
+    pop de
+    pop de
+    push de 
+    push de
+
+    jp DrawText_WithTypewriterEffect_Loop
+
+
+DrawText_WithTypewriterEffect_Loop_NewLine:
+
+    pop de
+
+    ld a, e
+    add a, 64
+    ld e, a
+    ld a, d
+    adc a, 0
+    ld d, a
+
+    push de
+
+    inc hl
+
+    jp DrawText_WithTypewriterEffect_Loop
+
+DrawText_WithTypewriterEffect_Loop_Normal:
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Wait a small amount of time
@@ -55,12 +134,6 @@ DrawText_WithTypewriterEffect::
     call WaitForVBlankFunction
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-    
-    ; Check for the end of string character 255
-    ld a, [hl]
-    cp 255
-    ret z
-
     ; Write the current character (in hl) to the address
     ; on the tilemap (in de)
     ld a, [hl]
@@ -70,4 +143,4 @@ DrawText_WithTypewriterEffect::
     inc hl
     inc de
 
-    jp DrawText_WithTypewriterEffect
+    jp DrawText_WithTypewriterEffect_Loop

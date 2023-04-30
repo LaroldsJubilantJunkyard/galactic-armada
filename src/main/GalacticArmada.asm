@@ -14,7 +14,10 @@ EntryPoint:
 	
 	ld a, 0
 	ld [wGameState], a
-
+	
+	ld a, 0
+	ld [wLevel], a
+	ld [wMaxLevel], a
 ; Do not turn the LCD off outside of VBlank
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ; Wait a small amount of time
@@ -80,21 +83,26 @@ NextGameState::
 
 	; Initiate the next state
 	ld a, [wGameState]
-	cp a, 2 ; 2 = Gameplay
+	cp a, 3 ; 2 = Gameplay
 	call z, InitGameplayState
 	ld a, [wGameState]
-	cp a, 1 ; 1 = Story
+	cp a,2 ; 1 = Story
 	call z, InitStoryState
+	ld a, [wGameState]
+	cp a, 1 ; 1 = Level Select
+	call z, InitLevelSelect
 	ld a, [wGameState]
 	cp a, 0 ; 0 = Menu
 	call z, InitTitleScreenState
 
 	; Update the next state
 	ld a, [wGameState]
-	cp a, 2 ; 2 = Gameplay
+	cp a, 3 ; 2 = Gameplay
 	jp z, UpdateGameplayState
-	cp a, 1 ; 1 = Story
+	cp a, 2 ; 2 = Gameplay
 	jp z, UpdateStoryState
+	cp a, 1 ; 1 = Story
+	jp z, UpdateLevelSelectState
 	jp UpdateTitleScreenState
 
 
@@ -104,3 +112,6 @@ wLastKeys:: db
 wCurKeys:: db
 wNewKeys:: db
 wGameState::db
+wPlayer::db
+wLevel:: db
+wMaxLevel:: db

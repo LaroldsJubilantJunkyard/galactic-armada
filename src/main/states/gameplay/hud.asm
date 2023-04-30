@@ -61,7 +61,7 @@ DrawScore::
     ld hl, wScore
     ld de, $9C06 ; The window tilemap starts at $9C00
 
-DrawScore_Loop:
+DrawNumber_Loop::
 
     ld a, [hli]
     add a, 10 ; our numeric tiles start at tile 10, so add to 10 to each bytes value
@@ -78,4 +78,4 @@ DrawScore_Loop:
     ; Increase which tile we are drawing to
     inc de
 
-    jp DrawScore_Loop
+    jp DrawNumber_Loop
