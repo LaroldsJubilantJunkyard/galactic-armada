@@ -18,7 +18,7 @@ rwildcard=$(wildcard $1$2) $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2))
 
 # How to recursively find all files that match a pattern
 ASMSOURCES := $(call rwildcard,src/,*.asm)  $(call rwildcard,libs/,*.asm)
-ASMSOURCES_COLLECTED = $(foreach dir,$(OBJDIR),$(notdir $(wildcard $(dir)/*.ASM)))
+ASMSOURCES_COLLECTED = $(foreach dir,$(OBJDIR),$(notdir $(wildcard $(dir)/*.asm)))
 
 OBJS       = $(ASMSOURCES_COLLECTED:%.asm=$(OBJDIR)/%.o)
 
